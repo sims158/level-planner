@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>level | planner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --pink:#e62065; --blue:#3fb8c0; --blue-deep:#1f8890; --ink:#1c1c1c;
+    --paper:#ffffff; --cloud:#f4f3f6; --line:#e7e4e9; --muted:#8b8691;
+
+    --l-notstarted:#8b8f98; --l-inprogress:#2564eb; --l-internalreview:#7c5cbf;
+    --l-awaitcontent:#f0973b; --l-awaitreview:#d4a017; --l-handedoff:#14b8a6;
+    --l-amends:#a21caf; --l-urgentamends:#dc2626; --l-complete:#16a34a;
+
+    --p-urgent:#dc2626; --p-important:#f0973b; --p-medium:#3fb8c0; --p-low:#8b8f98;
+  }
+  *{box-sizing:border-box;}
+  body{ margin:0; font-family:'Outfit',sans-serif; background:var(--cloud); color:var(--ink); -webkit-font-smoothing:antialiased; }
+  .h{ font-weight:800; color:var(--blue); line-height:1.05; margin:0; letter-spacing:-.01em; }
+  .h .dot{ color:var(--pink); }
+  button{ font-family:'Outfit',sans-serif; cursor:pointer; }
+  input, textarea, select{ font-family:'Outfit',sans-serif; }
+
+  .topbar{ background:var(--pink); color:#fff; display:flex; align-items:center; gap:14px; padding:12px 22px; flex-wrap:wrap; }
+  .topbar .mark{ width:26px;height:26px;border-radius:6px; background:#fff; color:var(--pink); display:flex;align-items:center;justify-content:center; font-weight:900; font-size:14px; flex:none; }
+  .topbar .name{ font-weight:700; font-size:14.5px; }
+  .topbar .spacer{ flex:1; }
+  .whoami{ display:flex; align-items:center; gap:6px; }
+  .whoami span{ font-size:12px; opacity:.85; }
+  .whoami input{ background:rgba(255,255,255,.18); border:1.5px solid rgba(255,255,255,.4); color:#fff; border-radius:8px; padding:7px 10px; font-size:12.5px; width:140px; }
+  .whoami input::placeholder{ color:rgba(255,255,255,.75); }
+  .whoami .loginbtn{ background:#fff; color:var(--pink); border:none; border-radius:8px; padding:7px 12px; font-size:12px; font-weight:700; }
+  .whoami .loginbtn:hover{ opacity:.9; }
+  .whoami .meplate{ display:flex; align-items:center; gap:8px; background:rgba(255,255,255,.18); border:1.5px solid rgba(255,255,255,.4); border-radius:20px; padding:5px 6px 5px 12px; }
+  .whoami .meplate .mename{ font-size:12.5px; font-weight:700; }
+  .whoami .switchbtn{ background:rgba(255,255,255,.25); border:none; color:#fff; border-radius:14px; padding:4px 10px; font-size:11px; font-weight:600; }
+  .whoami .switchbtn:hover{ background:rgba(255,255,255,.4); }
+  .iconbtn{ position:relative; background:rgba(255,255,255,.16); border:1.5px solid rgba(255,255,255,.35); color:#fff; border-radius:9px; width:38px; height:38px; display:flex; align-items:center; justify-content:center; }
+  .iconbtn:hover{ background:rgba(255,255,255,.26); }
+  .badge{ position:absolute; top:-6px; right:-6px; background:var(--ink); color:#fff; font-size:10.5px; font-weight:700; min-width:18px; height:18px; border-radius:100px; display:flex; align-items:center; justify-content:center; padding:0 4px; }
+  .primary{ background:#fff; color:var(--pink); border:none; border-radius:9px; padding:10px 16px; font-weight:700; font-size:13.5px; display:flex; align-items:center; gap:6px; }
+  .primary:hover{ background:#ffe6ee; }
+
+  .controls{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; padding:16px 24px 4px; max-width:1560px; margin:0 auto; }
+  .viewtabs{ display:flex; gap:4px; background:#fff; border:1.5px solid var(--line); border-radius:10px; padding:3px; }
+  .viewtabs button{ border:none; background:none; padding:7px 14px; font-size:13px; font-weight:700; color:var(--muted); border-radius:7px; }
+  .viewtabs button.active{ background:var(--blue); color:#fff; }
+  .controls input[type=text], .controls select{ border:1.5px solid var(--line); border-radius:9px; padding:9px 12px; font-size:13.5px; background:#fff; color:var(--ink); }
+  .controls input[type=text]{ min-width:190px; }
+  .controls label.inline{ font-size:12.5px; font-weight:600; color:var(--muted); display:flex; align-items:center; gap:6px; }
+  .dirbtn{ border:1.5px solid var(--line); background:#fff; border-radius:9px; width:36px; height:36px; display:flex; align-items:center; justify-content:center; font-size:14px; color:var(--muted); }
+  .dirbtn:hover{ border-color:var(--blue); color:var(--blue-deep); }
+  .hint{ font-size:11.5px; color:#aba5b0; padding:2px 24px 8px; max-width:1560px; margin:0 auto; }
+
+  .gridwrap{ max-width:1560px; margin:0 auto; padding:10px 24px 16px; overflow-x:auto; }
+  .gridsection{ margin-bottom:20px; }
+  .gridsection-head{ font-size:12.5px; font-weight:800; color:var(--blue); text-transform:uppercase; letter-spacing:.05em; margin:0 0 8px 4px; display:flex; align-items:center; gap:8px; }
+  .gridsection-count{ background:#fff; border:1.5px solid var(--line); color:var(--muted); font-size:11px; font-weight:700; border-radius:100px; padding:2px 9px; text-transform:none; letter-spacing:0; }
+  table.gtable{ width:100%; border-collapse:collapse; background:#fff; border-radius:14px; overflow:hidden; box-shadow:0 1px 2px rgba(20,8,25,.05); }
+  table.gtable th{ text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); padding:10px 12px; border-bottom:1.5px solid var(--line); white-space:nowrap; cursor:grab; user-select:none; }
+  table.gtable th.dragover{ background:#fdf1f5; }
+  table.gtable td{ padding:10px 12px; border-bottom:1px solid var(--line); font-size:13px; vertical-align:middle; }
+  table.gtable tr.datarow:hover td{ background:#fbfafc; }
+  table.gtable tr.datarow{ cursor:pointer; }
+  table.gtable tr.dragover td{ border-top:2px solid var(--pink); }
+  .taskname{ font-weight:600; }
+  .avatars{ display:flex; }
+  .avatar{ width:22px; height:22px; border-radius:100px; background:var(--blue); color:#fff; font-size:9.5px; font-weight:800; display:flex; align-items:center; justify-content:center; border:2px solid #fff; margin-left:-6px; flex:none; }
+  .avatars .avatar:first-child{ margin-left:0; }
+  .personchip{ display:flex; align-items:center; gap:6px; font-size:12.5px; }
+  .pill{ display:inline-block; font-size:10.5px; font-weight:700; padding:3px 9px; border-radius:100px; color:#fff; white-space:nowrap; }
+  .labelrow{ display:flex; gap:4px; flex-wrap:wrap; max-width:220px; }
+  .rowbtn{ border:1.5px solid var(--line); background:#fff; color:var(--muted); border-radius:7px; padding:5px 10px; font-size:11.5px; font-weight:700; white-space:nowrap; }
+  .rowbtn:hover{ border-color:var(--blue); color:var(--blue-deep); }
+  .dash{ color:#c7c1cd; }
+  .progresswrap{ display:flex; align-items:center; gap:8px; }
+  .progresstext{ font-size:11.5px; font-weight:700; color:var(--muted); }
+
+  .completedbar{ max-width:1560px; margin:0 auto; padding:0 24px 60px; }
+  .completedtoggle{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px 16px; display:flex; align-items:center; gap:10px; cursor:pointer; font-size:13px; font-weight:700; color:var(--muted); }
+  .completedtoggle:hover{ border-color:var(--blue); }
+  .completedtoggle .chev{ transition:transform .15s ease; }
+  .completedtoggle.open .chev{ transform:rotate(90deg); }
+  .completedbody{ display:none; margin-top:10px; }
+  .completedbody.open{ display:block; }
+
+  .board{ display:flex; gap:14px; padding:10px 24px 20px; max-width:1560px; margin:0 auto; overflow-x:auto; }
+  .col{ background:#fbfafc; border:1px solid var(--line); border-radius:16px; padding:14px; min-width:270px; max-width:270px; flex:none; }
+  .col-head{ display:flex; align-items:center; gap:8px; margin-bottom:12px; padding:0 2px; }
+  .swatch{ width:10px; height:10px; border-radius:3px; flex:none; }
+  .col-head .title{ font-weight:700; font-size:12.5px; text-transform:uppercase; letter-spacing:.03em; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .col-head .count{ background:var(--line); color:var(--muted); font-size:11px; font-weight:700; border-radius:100px; padding:2px 8px; }
+  .card{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:13px; margin-bottom:9px; cursor:pointer; box-shadow:0 1px 2px rgba(20,8,25,.04); }
+  .card:hover{ box-shadow:0 8px 20px rgba(20,8,25,.09); }
+  .card .ptitle{ font-size:13.5px; font-weight:700; margin:0 0 7px; line-height:1.3; }
+  .card .cardlabels{ display:flex; gap:4px; flex-wrap:wrap; margin-bottom:7px; }
+  .card .pmeta{ font-size:11.5px; color:var(--muted); display:flex; flex-wrap:wrap; gap:7px; align-items:center; }
+  .empty{ font-size:12px; color:#b9b3c0; text-align:center; padding:16px 6px; }
+  .boardcompleted{ max-width:1560px; margin:0 auto; padding:0 24px 60px; }
+
+  .overlay{ position:fixed; inset:0; background:rgba(20,8,25,.45); display:none; align-items:flex-start; justify-content:center; padding:34px 16px; z-index:50; overflow-y:auto; }
+  .overlay.show{ display:flex; }
+  .modal{ background:#fff; border-radius:18px; width:100%; max-width:680px; box-shadow:0 30px 70px rgba(20,8,25,.3); }
+  .modal-head{ display:flex; align-items:flex-start; justify-content:space-between; padding:22px 24px 4px; gap:10px; }
+  .modal-head input.title-input{ border:none; font-size:20px; font-weight:800; color:var(--ink); width:100%; padding:4px 0; outline:none; }
+  .modal-head input.title-input::placeholder{ color:#c7c1cd; }
+  .headright{ display:flex; align-items:center; gap:10px; flex:none; }
+  .progresswrap.big{ position:relative; width:50px; height:50px; }
+  .progresswrap.big .pct{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; color:var(--ink); }
+  .headbtns{ display:flex; gap:8px; flex:none; }
+  .deletebtn{ background:var(--cloud); border:1.5px solid var(--line); border-radius:8px; width:30px; height:30px; display:flex; align-items:center; justify-content:center; font-size:13px; color:var(--muted); }
+  .deletebtn:hover{ border-color:var(--pink); color:var(--pink); background:#fdf1f5; }
+  .closebtn{ background:var(--cloud); border:none; border-radius:8px; width:30px; height:30px; display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:16px; }
+  .closebtn:hover{ background:var(--line); }
+  .modal-body{ padding:6px 24px 24px; max-height:76vh; overflow-y:auto; }
+  .row2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:14px 0; }
+  .fld label{ display:block; font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.03em; margin-bottom:6px; }
+  .fld select, .fld input[type=text], .fld input[type=date]{ width:100%; border:1.5px solid var(--line); border-radius:9px; padding:9px 11px; font-size:13px; background:#fcfbfc; color:var(--ink); }
+  .fld select:focus, .fld input:focus, textarea:focus{ outline:none; border-color:var(--blue); background:#fff; }
+  textarea.desc{ width:100%; min-height:64px; border:1.5px solid var(--line); border-radius:9px; padding:11px; font-size:13.5px; line-height:1.5; resize:vertical; background:#fcfbfc; color:var(--ink); }
+  .section-label{ font-size:12px; font-weight:700; color:var(--ink); margin:20px 0 10px; display:flex; align-items:center; gap:6px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .labelpicker{ display:flex; flex-wrap:wrap; gap:7px; }
+  .labelchip{ display:flex; align-items:center; gap:6px; border:1.5px solid var(--line); border-radius:100px; padding:6px 12px; font-size:12px; font-weight:600; color:var(--muted); cursor:pointer; }
+  .labelchip .dot{ width:9px; height:9px; border-radius:3px; flex:none; }
+  .labelchip.on{ border-color:transparent; color:#fff; }
+
+  .assignwrap{ display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
+  .achip{ display:flex; align-items:center; gap:6px; background:var(--cloud); border-radius:100px; padding:5px 10px 5px 5px; font-size:12px; font-weight:600; }
+  .achip .avatar{ margin:0; border:none; }
+  .achip .x{ border:none; background:none; color:var(--muted); font-size:14px; padding:0 2px; }
+  .achip .x:hover{ color:var(--pink); }
+  .addassign{ display:flex; gap:6px; flex-wrap:wrap; }
+  .addassign input{ flex:1; min-width:120px; border:1.5px solid var(--line); border-radius:8px; padding:7px 10px; font-size:12.5px; }
+  .addassign button{ border:1.5px dashed var(--line); background:#fcfbfc; color:var(--muted); border-radius:8px; padding:0 14px; font-size:12px; font-weight:700; }
+
+  .singleperson{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+
+  .attach-row{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .attach-row button{ border:1.5px dashed var(--line); background:#fcfbfc; color:var(--muted); border-radius:9px; padding:8px 12px; font-size:12.5px; font-weight:600; display:flex; align-items:center; gap:6px; }
+  .attach-row button:hover{ border-color:var(--blue); color:var(--blue-deep); }
+  .attach-mini{ display:flex; gap:6px; margin-bottom:8px; }
+  .attach-mini input{ flex:1; border:1.5px solid var(--line); border-radius:8px; padding:8px 10px; font-size:12.5px; }
+  .attach-mini .go{ background:var(--blue); color:#fff; border:none; border-radius:8px; padding:0 12px; font-size:12.5px; font-weight:700; }
+  .attlist{ display:flex; flex-direction:column; gap:6px; margin-bottom:4px; }
+  .att{ display:flex; align-items:center; gap:9px; background:#fcfbfc; border:1px solid var(--line); border-radius:9px; padding:8px 10px; font-size:12.5px; }
+  .att img{ width:30px; height:30px; object-fit:cover; border-radius:6px; flex:none; }
+  .att .ic{ width:30px; height:30px; border-radius:6px; background:var(--cloud); display:flex; align-items:center; justify-content:center; flex:none; color:var(--blue-deep); }
+  .att a{ color:var(--ink); text-decoration:none; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .att .attsize{ color:var(--muted); font-size:11.5px; flex:none; }
+  .att .rm{ margin-left:auto; border:none; background:none; color:#c7c1cd; font-size:15px; }
+  .att .rm:hover{ color:var(--pink); }
+  input[type=file]{ display:none; }
+
+  .comment{ display:flex; gap:10px; margin-bottom:14px; }
+  .comment .avatar{ width:26px; height:26px; font-size:11px; margin:0; }
+  .comment .bubble{ background:var(--cloud); border-radius:10px; padding:9px 12px; flex:1; }
+  .comment.review .bubble{ background:#fdf1f5; }
+  .comment .who{ font-size:12.5px; font-weight:700; margin-bottom:2px; }
+  .comment .who span{ font-weight:400; color:var(--muted); margin-left:6px; }
+  .comment .txt{ font-size:13.5px; line-height:1.5; }
+  .addcomment{ display:flex; gap:8px; margin-top:6px; }
+  .addcomment textarea{ flex:1; min-height:44px; border:1.5px solid var(--line); border-radius:9px; padding:9px 11px; font-size:13.5px; resize:vertical; }
+  .addcomment button{ background:var(--pink); color:#fff; border:none; border-radius:9px; padding:0 16px; font-weight:700; font-size:13px; }
+
+  /* ---------- chat room ---------- */
+  .chatbox{ background:#fbfafc; border:1px solid var(--line); border-radius:12px; padding:14px; max-height:340px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; }
+  .chatmsg{ display:flex; gap:8px; max-width:82%; }
+  .chatmsg.mine{ align-self:flex-end; flex-direction:row-reverse; }
+  .chatmsg .avatar{ width:24px; height:24px; font-size:10px; margin:0; flex:none; }
+  .chatmsg .bubble{ background:#fff; border:1px solid var(--line); border-radius:14px 14px 14px 4px; padding:8px 12px; }
+  .chatmsg.mine .bubble{ background:var(--blue); color:#fff; border-color:var(--blue); border-radius:14px 14px 4px 14px; }
+  .chatmsg .who{ font-size:11px; font-weight:700; color:var(--muted); margin-bottom:2px; }
+  .chatmsg.mine .who{ color:rgba(255,255,255,.85); text-align:right; }
+  .chatmsg .txt{ font-size:13.5px; line-height:1.45; white-space:pre-wrap; word-break:break-word; }
+  .chatmsg .time{ font-size:10px; color:var(--muted); margin-top:3px; }
+  .chatmsg.mine .time{ color:rgba(255,255,255,.75); text-align:right; }
+  .chatempty{ font-size:12.5px; color:#b9b3c0; text-align:center; padding:24px 10px; }
+  .chatinputrow{ display:flex; gap:8px; margin-top:10px; }
+  .chatinputrow textarea{ flex:1; min-height:42px; max-height:120px; border:1.5px solid var(--line); border-radius:9px; padding:9px 11px; font-size:13.5px; resize:vertical; }
+  .chatinputrow button{ background:var(--pink); color:#fff; border:none; border-radius:9px; padding:0 16px; font-weight:700; font-size:13px; }
+  .chathint{ font-size:11px; color:#aba5b0; margin-top:5px; }
+
+  /* ---------- amends (review checklist cards, Notes-app style) ---------- */
+  .amendgrid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(130px,1fr)); gap:10px; margin-bottom:4px; }
+  .amendcard{ position:relative; background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px; cursor:pointer; min-height:110px; display:flex; flex-direction:column; justify-content:space-between; box-shadow:0 1px 2px rgba(20,8,25,.04); transition:box-shadow .15s ease, opacity .15s ease; }
+  .amendcard:hover{ box-shadow:0 8px 20px rgba(20,8,25,.1); }
+  .amendcard.done{ opacity:.5; background:var(--cloud); }
+  .amendcard .check{ width:17px; height:17px; border-radius:5px; border:2px solid #cfc9d3; flex:none; display:flex; align-items:center; justify-content:center; margin-bottom:8px; }
+  .amendcard.done .check{ background:var(--l-complete); border-color:var(--l-complete); }
+  .amendcard .check svg{ width:10px; height:10px; opacity:0; }
+  .amendcard.done .check svg{ opacity:1; }
+  .amendcard .txt{ font-size:12px; line-height:1.4; color:var(--ink); display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; flex:1; }
+  .amendcard.done .txt{ text-decoration:line-through; color:var(--muted); }
+  .amendcard .meta{ font-size:10px; color:var(--muted); margin-top:8px; }
+  .amendcard .donepill{ position:absolute; top:8px; right:8px; background:var(--l-complete); color:#fff; font-size:8.5px; font-weight:800; padding:2px 7px; border-radius:100px; text-transform:uppercase; letter-spacing:.03em; }
+  .amendempty{ font-size:12.5px; color:#b9b3c0; padding:10px 2px; }
+
+  .amendoverlay{ position:fixed; inset:0; background:rgba(20,8,25,.55); display:none; align-items:center; justify-content:center; z-index:70; padding:20px; }
+  .amendoverlay.show{ display:flex; }
+  .amendbox{ background:#fff; border-radius:16px; max-width:420px; width:100%; padding:22px; box-shadow:0 30px 70px rgba(20,8,25,.3); }
+  .amendbox .amendmeta{ font-size:12px; color:var(--muted); margin-bottom:12px; font-weight:600; }
+  .amendbox .amendtxt{ font-size:14.5px; line-height:1.6; white-space:pre-wrap; color:var(--ink); margin-bottom:20px; }
+  .amendbox .amendactions{ display:flex; justify-content:space-between; align-items:center; gap:10px; }
+  #amendToggleBtn{ background:var(--l-complete); color:#fff; border:none; border-radius:9px; padding:10px 18px; font-weight:700; font-size:13px; }
+  #amendToggleBtn.undo{ background:var(--cloud); color:var(--ink); border:1.5px solid var(--line); }
+  .activity{ font-size:12px; color:var(--muted); padding:5px 0; border-bottom:1px dashed var(--line); }
+  .activity:last-child{ border-bottom:none; }
+
+
+  .npanel{ position:fixed; top:0; right:0; height:100%; width:360px; max-width:92vw; background:#fff; box-shadow:-16px 0 40px rgba(20,8,25,.2); transform:translateX(100%); transition:transform .2s ease; z-index:60; display:flex; flex-direction:column; }
+  .npanel.show{ transform:translateX(0); }
+  .npanel-head{ padding:18px 20px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; }
+  .npanel-list{ flex:1; overflow-y:auto; padding:8px 14px; }
+  .nitem{ padding:12px 10px; border-radius:10px; margin-bottom:4px; cursor:pointer; }
+  .nitem:hover{ background:var(--cloud); }
+  .nitem.unread{ background:#fdf1f5; }
+  .nitem .msg{ font-size:13px; line-height:1.45; }
+  .nitem .time{ font-size:11px; color:var(--muted); margin-top:4px; }
+  .markall{ font-size:12px; font-weight:700; color:var(--blue-deep); background:none; border:none; }
+  .npanel-empty{ text-align:center; color:#b9b3c0; font-size:13px; padding:40px 20px; }
+  .scrim{ position:fixed; inset:0; background:rgba(20,8,25,.3); display:none; z-index:55; }
+
+  /* ---------- toast (replaces alert()) ---------- */
+  .toast{ position:fixed; left:50%; bottom:28px; transform:translateX(-50%) translateY(20px); background:var(--ink); color:#fff; font-size:13px; font-weight:600; padding:12px 20px; border-radius:100px; box-shadow:0 12px 30px rgba(20,8,25,.3); z-index:90; opacity:0; pointer-events:none; transition:opacity .2s ease, transform .2s ease; max-width:88vw; text-align:center; }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  /* ---------- delete confirm ---------- */
+  .deleteconfirm{ background:#fdeeee; border:1.5px solid #f3c6c6; border-radius:12px; padding:14px; margin:14px 0; display:none; }
+  .deleteconfirm.show{ display:block; }
+  .deleteconfirm p{ font-size:13px; color:#a1272c; margin:0 0 10px; }
+  .deleteconfirm .row{ display:flex; gap:8px; justify-content:flex-end; }
+  .deleteconfirm .cancel{ background:none; border:none; color:var(--muted); font-size:12.5px; font-weight:700; }
+  .deleteconfirm .go{ background:#dc2626; color:#fff; border:none; border-radius:8px; padding:8px 16px; font-size:12.5px; font-weight:700; }
+
+  /* ---------- inline mini-forms (replace prompt()) ---------- */
+  .bucket-mini{ display:flex; gap:6px; margin-top:8px; }
+  .bucket-mini input{ flex:1; border:1.5px solid var(--line); border-radius:8px; padding:8px 10px; font-size:12.5px; }
+  .bucket-mini button{ background:var(--blue); color:#fff; border:none; border-radius:8px; padding:0 12px; font-size:12.5px; font-weight:700; }
+
+  .scrim.show{ display:block; }
+
+  @media (max-width:640px){ .row2{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="mark">l</div>
+    <div class="name">level | planner</div>
+    <div class="spacer"></div>
+    <div class="whoami" id="whoamiBox">
+      <span>you are</span>
+      <input id="whoName" type="text" list="knownNames" placeholder="your name">
+      <button class="loginbtn" id="loginBtn">Login</button>
+    </div>
+    <datalist id="knownNames"></datalist>
+    <button class="iconbtn" id="bellBtn" title="notifications">🔔<span class="badge" id="bellBadge" style="display:none;">0</span></button>
+    <button class="primary" id="newBtn">+ new task</button>
+  </div>
+
+  <div class="controls">
+    <div class="viewtabs">
+      <button id="tabGrid" class="active">Grid</button>
+      <button id="tabBoard">Board</button>
+    </div>
+    <input type="text" id="searchInput" placeholder="Search tasks...">
+    <label class="inline">Group / sort by
+      <select id="groupBy">
+        <option value="status">Status</option>
+        <option value="priority">Priority</option>
+        <option value="bucket">Job type</option>
+        <option value="labels">Labels</option>
+        <option value="assignee">Assigned to</option>
+        <option value="due">Due date</option>
+        <option value="custom">Custom order (drag to reorder)</option>
+      </select>
+    </label>
+    <button class="dirbtn" id="dirBtn" title="Toggle ascending / descending">↑</button>
+  </div>
+  <div class="hint" id="dragHint">Drag column headers to reorder them. Switch to "Custom order" to drag rows into any order you like.</div>
+
+  <div class="gridwrap" id="gridView"></div>
+  <div class="completedbar" id="completedBar" style="display:none;">
+    <div class="completedtoggle" id="completedToggle"><span class="chev">▸</span> completed tasks (<span id="completedCount">0</span>)</div>
+    <div class="completedbody" id="completedBody"></div>
+  </div>
+
+  <div class="board" id="boardView" style="display:none;"></div>
+  <div class="boardcompleted" id="boardCompletedBar" style="display:none;">
+    <div class="completedtoggle" id="boardCompletedToggle"><span class="chev">▸</span> completed tasks (<span id="boardCompletedCount">0</span>)</div>
+    <div class="completedbody" id="boardCompletedBody" style="display:flex; gap:14px; flex-wrap:wrap;"></div>
+  </div>
+
+  <div class="scrim" id="scrim"></div>
+  <div class="toast" id="toast"></div>
+
+  <div class="npanel" id="npanel">
+    <div class="npanel-head">
+      <h3 class="h">notifications<span class="dot">.</span></h3>
+      <div style="display:flex; gap:10px; align-items:center;">
+        <button class="markall" id="markAllBtn">mark all read</button>
+        <button class="closebtn" id="closeNpanel">&times;</button>
+      </div>
+    </div>
+    <div class="npanel-list" id="npanelList"></div>
+  </div>
+
+  <div class="overlay" id="overlay">
+    <div class="modal">
+      <div class="modal-head">
+        <input class="title-input" id="mTitle" placeholder="Task title">
+        <div class="headright">
+          <div class="progresswrap big" id="modalDonut"></div>
+          <div class="headbtns">
+            <button class="deletebtn" id="deleteBtn" title="Delete task">🗑</button>
+            <button class="closebtn" id="closeModal">&times;</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-body">
+
+        <div class="deleteconfirm" id="deleteConfirm">
+          <p id="deleteConfirmText">Delete this task? This can't be undone.</p>
+          <div class="row">
+            <button class="cancel" id="deleteConfirmCancel">Cancel</button>
+            <button class="go" id="deleteConfirmGo">Delete permanently</button>
+          </div>
+        </div>
+
+        <div class="fld" style="margin-top:10px;">
+          <label>Description</label>
+          <textarea class="desc" id="mDesc" placeholder="What's this task about..."></textarea>
+        </div>
+
+        <div class="row2">
+          <div class="fld">
+            <label>Status</label>
+            <select id="mStatus">
+              <option value="notstarted">Not started</option>
+              <option value="inprogress">In progress</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+          <div class="fld">
+            <label>Priority</label>
+            <select id="mPriority">
+              <option value="urgent">Urgent</option>
+              <option value="important">Important</option>
+              <option value="medium" selected>Medium</option>
+              <option value="low">Low</option>
+            </select>
+          </div>
+          <div class="fld">
+            <label>Job type</label>
+            <select id="mBucket"></select>
+            <div id="bucketMiniHost"></div>
+          </div>
+          <div class="fld">
+            <label>Due date</label>
+            <input type="date" id="mDue">
+          </div>
+          <div class="fld">
+            <label>Start date</label>
+            <input type="date" id="mStart">
+          </div>
+        </div>
+
+        <div class="section-label">🏷️ labels</div>
+        <div class="labelpicker" id="labelPicker"></div>
+
+        <div class="section-label">👥 assigned to <span style="text-transform:none;font-weight:400;color:var(--muted);">— whoever's doing the work</span></div>
+        <div class="assignwrap" id="assignWrap"></div>
+        <div class="addassign" style="margin-top:8px;">
+          <input type="text" id="assignInput" list="knownNames" placeholder="Name">
+          <button type="button" id="assignAddBtn">Add</button>
+        </div>
+
+        <div style="margin-top:20px;">
+          <div class="section-label" style="margin-top:0;">🕵️ reviewer</div>
+          <div class="singleperson" id="reviewerWrap"></div>
+          <div class="addassign" style="margin-top:8px;">
+            <input type="text" id="reviewerInput" list="knownNames" placeholder="Name">
+            <button type="button" id="reviewerAddBtn">Set</button>
+          </div>
+        </div>
+
+        <div class="section-label">📎 attachments</div>
+        <div class="attach-row">
+          <button type="button" id="addLinkBtn">🔗 add link</button>
+          <button type="button" id="addFileBtn">📎 upload file</button>
+          <input type="file" id="fileInput">
+        </div>
+        <div id="attachMiniHost"></div>
+        <div class="attlist" id="attList"></div>
+
+        <div class="section-label">💬 chat <span style="text-transform:none;font-weight:400;color:var(--muted);">— this task's own chat room</span></div>
+        <div class="chatbox" id="chatBox"></div>
+        <div class="chatinputrow">
+          <textarea id="chatInput" placeholder="Message this task's chat..."></textarea>
+          <button id="chatBtn">Send</button>
+        </div>
+        <div class="chathint">Enter to send, Shift+Enter for a new line. Everyone on this task shares this chat.</div>
+
+        <div class="section-label">✅ review <span style="text-transform:none;font-weight:400;color:var(--muted);">— each comment becomes an amend card. Click one to open it, tick it off once it's done.</span></div>
+        <div class="amendgrid" id="reviewList"></div>
+        <div class="addcomment">
+          <textarea id="reviewInput" placeholder="Write a review comment — it'll turn into an amend card..."></textarea>
+          <button id="reviewBtn">Post</button>
+        </div>
+
+        <div class="section-label">🕓 activity</div>
+        <div id="activityList"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="amendoverlay" id="amendOverlay">
+    <div class="amendbox">
+      <div class="amendmeta" id="amendMeta"></div>
+      <div class="amendtxt" id="amendTxt"></div>
+      <div class="amendactions">
+        <button class="closebtn" id="amendClose">&times;</button>
+        <button id="amendToggleBtn"></button>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function(){
+
+  const LABELS = [
+    { key:'notstarted', text:'Not started', color:'var(--l-notstarted)', pct:0 },
+    { key:'inprogress', text:'In progress', color:'var(--l-inprogress)', pct:25 },
+    { key:'internalreview', text:'Internal review in progress', color:'var(--l-internalreview)', pct:50 },
+    { key:'awaitcontent', text:'Awaiting your content', color:'var(--l-awaitcontent)', pct:35 },
+    { key:'awaitreview', text:'Awaiting your review', color:'var(--l-awaitreview)', pct:65 },
+    { key:'handedoff', text:'Handed off to client', color:'var(--l-handedoff)', pct:75 },
+    { key:'amends', text:'Amends in progress', color:'var(--l-amends)', pct:85 },
+    { key:'urgentamends', text:'Urgent amends needed', color:'var(--l-urgentamends)', pct:85 },
+    { key:'complete', text:'Complete / Signed-off', color:'var(--l-complete)', pct:100 }
+  ];
+  const STATUS = { notstarted:{text:'Not started',color:'var(--l-notstarted)'}, inprogress:{text:'In progress',color:'var(--l-inprogress)'}, completed:{text:'Completed',color:'var(--l-complete)'} };
+  const PRIORITY = { urgent:{text:'Urgent',color:'var(--p-urgent)',rank:0}, important:{text:'Important',color:'var(--p-important)',rank:1}, medium:{text:'Medium',color:'var(--p-medium)',rank:2}, low:{text:'Low',color:'var(--p-low)',rank:3} };
+  const DEFAULT_BUCKETS = ['Website','Printed Collateral','Digital Collateral','Social media','Blogs','Ads','Emails & newsletters','Micro-apps'];
+  const COLS = [
+    {key:'title', label:'Task name'}, {key:'assignee', label:'Assigned to'},
+    {key:'reviewer', label:'Reviewer'}, {key:'start', label:'Start'}, {key:'due', label:'Due'},
+    {key:'status', label:'Status'}, {key:'priority', label:'Priority'}, {key:'labels', label:'Labels'},
+    {key:'bucket', label:'Job type'}, {key:'progress', label:'Progress'}
+  ];
+
+  let tasks=[], people=[], buckets=[], notifications=[], columnOrder=COLS.map(c=>c.key), manualOrder=[];
+  let me={name:''}, view='grid', groupBy='status', sortDir=1, search='', draft=null;
+  let completedOpen=false, boardCompletedOpen=false;
+
+  const $ = id => document.getElementById(id);
+  const cssColor = v => v.startsWith('var(') ? getComputedStyle(document.documentElement).getPropertyValue(v.slice(4,-1)).trim() : v;
+  function initials(name){ if(!name) return '?'; return name.trim().split(/\s+/).slice(0,2).map(w=>w[0].toUpperCase()).join(''); }
+  function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,8); }
+  function timeAgo(ts){ const m=Math.round((Date.now()-ts)/60000); if(m<1)return'just now'; if(m<60)return m+'m ago'; const h=Math.round(m/60); if(h<24)return h+'h ago'; return Math.round(h/24)+'d ago'; }
+  function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; }
+  let toastTimer=null;
+  function toast(msg){
+    const el = $('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=>el.classList.remove('show'), 3800);
+  }
+  function fmtDate(s){ if(!s) return ''; const d=new Date(s+'T00:00'); return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'}); }
+  function monthGroup(s){ if(!s) return 'No due date'; const d=new Date(s+'T00:00'); return d.toLocaleDateString('en-GB',{month:'short',year:'numeric'}); }
+
+  function computePercent(t){
+    if(t.status==='completed') return 100;
+    const labs = (t.labels||[]).map(k=>LABELS.find(l=>l.key===k)).filter(Boolean);
+    if(labs.length) return Math.max(...labs.map(l=>l.pct));
+    return t.status==='inprogress' ? 15 : 0;
+  }
+  function donutSvg(percent, size, stroke){
+    const r=(size-stroke)/2, c=2*Math.PI*r, offset=c-(percent/100)*c;
+    const color = percent>=100 ? cssColor('var(--l-complete)') : cssColor('var(--blue)');
+    return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+      <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${cssColor('var(--line)')}" stroke-width="${stroke}"/>
+      <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-dasharray="${c}" stroke-dashoffset="${offset}" stroke-linecap="round" transform="rotate(-90 ${size/2} ${size/2})"/>
+    </svg>`;
+  }
+
+  /* ---------------- storage (Supabase) ---------------- */
+  const SUPABASE_URL = 'https://grpsjzepktmcyjpjggsk.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_SVZ0PPk37WXzxNHnBwlVeg_QPgGYhaJ';
+  const FILE_BUCKET  = 'task-files';
+  const MAX_FILE_MB  = 10;
+
+  function sbHeaders(extra){
+    return Object.assign({
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY
+    }, extra||{});
+  }
+  async function sbSelect(table, query){
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${query||'select=*'}`, { headers: sbHeaders() });
+    if(!r.ok) throw new Error(`${table} read failed: ${r.status}`);
+    return r.json();
+  }
+  async function sbUpsert(table, rows){
+    if(!rows || (Array.isArray(rows) && rows.length===0)) return;
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
+      method:'POST',
+      headers: sbHeaders({ 'Content-Type':'application/json', 'Prefer':'resolution=merge-duplicates,return=minimal' }),
+      body: JSON.stringify(rows)
+    });
+    if(!r.ok) throw new Error(`${table} write failed: ${r.status}`);
+  }
+  async function sbDelete(table, query){
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${query}`, { method:'DELETE', headers: sbHeaders() });
+    if(!r.ok) throw new Error(`${table} delete failed: ${r.status}`);
+  }
+
+  async function loadAll(){
+    try{
+      const rows = await sbSelect('tasks','select=id,data&order=updated_at.desc');
+      tasks = rows.map(r=>Object.assign({}, r.data, {id:r.id}));
+    }catch(e){ console.error(e); tasks=[]; toast('Could not load tasks — check your connection.'); }
+    try{ people = await sbSelect('people','select=name,email'); }catch(e){ console.error(e); people=[]; }
+    try{
+      const rows = await sbSelect('buckets','select=name,position&order=position.asc');
+      buckets = rows.length ? rows.map(r=>r.name) : DEFAULT_BUCKETS.slice();
+    }catch(e){ console.error(e); buckets=DEFAULT_BUCKETS.slice(); }
+    try{
+      const rows = await sbSelect('notifications','select=*&order=created_at.desc');
+      notifications = rows.map(r=>({ id:r.id, recipient:r.recipient, taskId:r.task_id, taskTitle:r.task_title, message:r.message, readBy:r.read_by||[], createdAt:new Date(r.created_at).getTime() }));
+    }catch(e){ console.error(e); notifications=[]; }
+    try{
+      const rows = await sbSelect('settings','select=key,value');
+      const co = rows.find(r=>r.key==='colorder'), ro = rows.find(r=>r.key==='roworder');
+      columnOrder = (co && Array.isArray(co.value) && co.value.length) ? co.value : COLS.map(c=>c.key);
+      manualOrder = (ro && Array.isArray(ro.value)) ? ro.value : [];
+    }catch(e){ console.error(e); columnOrder=COLS.map(c=>c.key); manualOrder=[]; }
+    try{ me = JSON.parse(localStorage.getItem('gl-planner-me')||'{"name":""}'); }catch(e){ me={name:''}; }
+    renderWhoAmI();
+  }
+
+  function taskRow(t){ const d=Object.assign({}, t); delete d.id; return { id:t.id, data:d, updated_at:new Date().toISOString() }; }
+  async function saveTask(t){ try{ await sbUpsert('tasks', [taskRow(t)]); }catch(e){ console.error(e); toast('Change not saved — check your connection.'); } }
+  async function saveTasks(){ try{ await sbUpsert('tasks', tasks.map(taskRow)); }catch(e){ console.error(e); toast('Changes not saved — check your connection.'); } }
+  async function deleteTaskRow(id){ try{ await sbDelete('tasks', `id=eq.${encodeURIComponent(id)}`); }catch(e){ console.error(e); toast('Could not delete — check your connection.'); } }
+  async function savePeople(){ try{ await sbUpsert('people', people.map(p=>({name:p.name, email:p.email||''}))); }catch(e){ console.error(e); } }
+  async function saveBuckets(){ try{ await sbUpsert('buckets', buckets.map((b,i)=>({name:b, position:i}))); }catch(e){ console.error(e); } }
+  async function saveNotifications(){
+    try{ await sbUpsert('notifications', notifications.map(n=>({ id:n.id, recipient:n.recipient, task_id:n.taskId||null, task_title:n.taskTitle||null, message:n.message||null, read_by:n.readBy||[] }))); }
+    catch(e){ console.error(e); }
+  }
+  async function saveColOrder(){ try{ await sbUpsert('settings', [{key:'colorder', value:columnOrder}]); }catch(e){ console.error(e); } }
+  async function saveRowOrder(){ try{ await sbUpsert('settings', [{key:'roworder', value:manualOrder}]); }catch(e){ console.error(e); } }
+  function saveMe(){ try{ localStorage.setItem('gl-planner-me', JSON.stringify(me)); }catch(e){ console.error(e); } }
+
+  function fileKindFor(name){
+    const ext = (name.split('.').pop()||'').toLowerCase();
+    if(['png','jpg','jpeg','gif','webp','svg','avif'].includes(ext)) return 'image';
+    if(ext==='pdf') return 'pdf';
+    if(['doc','docx','odt','rtf','txt'].includes(ext)) return 'doc';
+    if(['xls','xlsx','csv','numbers'].includes(ext)) return 'sheet';
+    if(['ppt','pptx','key'].includes(ext)) return 'slides';
+    if(['zip','rar','7z'].includes(ext)) return 'zip';
+    return 'file';
+  }
+  async function uploadFile(file){
+    const safe = file.name.replace(/[^\w.\- ]+/g,'_').replace(/\s+/g,'_');
+    const path = `${uid()}-${safe}`;
+    toast(`Uploading ${file.name}…`);
+    try{
+      const r = await fetch(`${SUPABASE_URL}/storage/v1/object/${FILE_BUCKET}/${encodeURIComponent(path)}`, {
+        method:'POST',
+        headers: sbHeaders({ 'Content-Type': file.type || 'application/octet-stream', 'x-upsert':'true' }),
+        body: file
+      });
+      if(!r.ok) throw new Error('upload failed: ' + r.status);
+      const url = `${SUPABASE_URL}/storage/v1/object/public/${FILE_BUCKET}/${encodeURIComponent(path)}`;
+      toast(`${file.name} uploaded.`);
+      return { id:uid(), kind:fileKindFor(file.name), label:file.name, url, path, size:file.size };
+    } catch(e){
+      console.error(e);
+      toast(`Couldn't upload ${file.name}. Check your connection and try again.`);
+      return null;
+    }
+  }
+  async function deleteStoredFile(path){
+    if(!path) return;
+    try{ await fetch(`${SUPABASE_URL}/storage/v1/object/${FILE_BUCKET}/${encodeURIComponent(path)}`, { method:'DELETE', headers: sbHeaders() }); }
+    catch(e){ console.error(e); }
+  }
+  function renderWhoAmI(){
+    const box = $('whoamiBox');
+    if(me.name){
+      box.innerHTML = `<div class="meplate"><span class="mename">${escapeHtml(me.name)}</span><button class="switchbtn" id="switchUserBtn">switch</button></div>`;
+      $('switchUserBtn').addEventListener('click', ()=>{ me.name=''; saveMe(); renderWhoAmI(); renderBell(); });
+    } else {
+      box.innerHTML = `<span>you are</span><input id="whoName" type="text" list="knownNames" placeholder="your name"><button class="loginbtn" id="loginBtn">Login</button>`;
+      const doLogin = ()=>{
+        const name = $('whoName').value.trim();
+        if(!name){ $('whoName').focus(); return; }
+        me.name = name; saveMe(); upsertPerson(name); refreshKnownNames(); renderWhoAmI(); renderBell();
+      };
+      $('loginBtn').addEventListener('click', doLogin);
+      $('whoName').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); doLogin(); } });
+    }
+  }
+
+  function findPerson(name){ return people.find(p=>p.name.toLowerCase()===name.trim().toLowerCase()); }
+  function upsertPerson(name,email){
+    const ex=findPerson(name);
+    if(ex){ if(email) ex.email=email; } else { people.push({name:name.trim(), email:email||''}); }
+    savePeople();
+  }
+  function refreshKnownNames(){
+    const names = new Set(people.map(p=>p.name));
+    $('knownNames').innerHTML = Array.from(names).map(n=>`<option value="${escapeHtml(n)}">`).join('');
+  }
+
+  /* ---------------- notifications ---------------- */
+  function notifyPeople(recipients, taskId, taskTitle, message){
+    recipients.filter(Boolean).forEach(r=>{
+      if(me.name && r.toLowerCase()===me.name.trim().toLowerCase()) return;
+      notifications.unshift({ id:uid(), recipient:r, taskId, taskTitle, message, createdAt:Date.now(), readBy:[] });
+    });
+    saveNotifications(); renderBell();
+  }
+  function teamNames(t){
+    const names = (t.assignees||[]).map(a=>a.name);
+    if(t.reviewer && t.reviewer.name) names.push(t.reviewer.name);
+    return Array.from(new Set(names));
+  }
+  function notifyTeam(message){ if(draft) notifyPeople(teamNames(draft), draft.id, draft.title, message); }
+  function myNotifications(){ if(!me.name) return []; return notifications.filter(n=>n.recipient.toLowerCase()===me.name.trim().toLowerCase()); }
+  function isRead(n){ return me.name && n.readBy.map(x=>x.toLowerCase()).includes(me.name.trim().toLowerCase()); }
+  function renderBell(){
+    const unread = myNotifications().filter(n=>!isRead(n)).length;
+    const b=$('bellBadge');
+    if(unread>0){ b.style.display='flex'; b.textContent = unread>9?'9+':unread; } else b.style.display='none';
+  }
+  function renderNotifPanel(){
+    const list=$('npanelList');
+    const mine = myNotifications().sort((a,b)=>b.createdAt-a.createdAt);
+    if(!me.name){ list.innerHTML='<div class="npanel-empty">Enter your name up top so we know which notifications are yours.</div>'; return; }
+    if(mine.length===0){ list.innerHTML='<div class="npanel-empty">Nothing yet. Updates on tasks you\'re on will show up here.</div>'; return; }
+    list.innerHTML = mine.map(n=>`
+      <div class="nitem ${isRead(n)?'':'unread'}" data-nid="${n.id}" data-tid="${n.taskId}">
+        <div class="msg">${escapeHtml(n.message)}</div><div class="time">${timeAgo(n.createdAt)}</div>
+      </div>`).join('');
+    list.querySelectorAll('.nitem').forEach(el=>{
+      el.addEventListener('click', ()=>{
+        const n = notifications.find(x=>x.id===el.dataset.nid);
+        if(n && me.name && !isRead(n)){ n.readBy.push(me.name); saveNotifications(); }
+        renderBell(); renderNotifPanel();
+        if(tasks.find(t=>t.id===el.dataset.tid)){ closeNotifPanel(); openModal(el.dataset.tid); }
+      });
+    });
+  }
+  function openNotifPanel(){ $('npanel').classList.add('show'); $('scrim').classList.add('show'); renderNotifPanel(); }
+  function closeNotifPanel(){ $('npanel').classList.remove('show'); $('scrim').classList.remove('show'); }
+
+  /* ---------------- filtering / sorting ---------------- */
+  function filtered(){ return tasks.filter(t => !search || t.title.toLowerCase().includes(search.toLowerCase())); }
+  function activeOnly(list){ return list.filter(t=>t.status!=='completed'); }
+  function completedOnly(list){ return list.filter(t=>t.status==='completed'); }
+
+  function sortKeyValue(t, key){
+    if(key==='status') return ['inprogress','notstarted','completed'].indexOf(t.status);
+    if(key==='priority') return PRIORITY[t.priority]?PRIORITY[t.priority].rank:9;
+    if(key==='bucket') return (t.bucket||'').toLowerCase();
+    if(key==='labels') return (t.labels&&t.labels[0]) ? LABELS.findIndex(l=>l.key===t.labels[0]) : 999;
+    if(key==='assignee') return (t.assignees&&t.assignees[0]&&t.assignees[0].name||'').toLowerCase();
+    if(key==='due') return t.dueDate || '9999-99-99';
+    return '';
+  }
+  function sortedList(list){
+    if(groupBy==='custom'){
+      const order = manualOrder.length ? manualOrder : list.map(t=>t.id);
+      const ranked = list.slice().sort((a,b)=>order.indexOf(a.id)-order.indexOf(b.id));
+      return sortDir===1 ? ranked : ranked.reverse();
+    }
+    const ranked = list.slice().sort((a,b)=>{
+      const av=sortKeyValue(a,groupBy), bv=sortKeyValue(b,groupBy);
+      if(av<bv) return -1; if(av>bv) return 1; return 0;
+    });
+    return sortDir===1 ? ranked : ranked.reverse();
+  }
+
+  /* ---------------- grid: cell + column rendering ---------------- */
+  function personCellHtml(p){
+    if(!p || !p.name) return '<span class="dash">—</span>';
+    return `<div class="personchip"><div class="avatar">${initials(p.name)}</div>${escapeHtml(p.name)}</div>`;
+  }
+  function cellHtml(t, key){
+    switch(key){
+      case 'title': return `<td class="taskname">${escapeHtml(t.title)}</td>`;
+      case 'assignee': {
+        const avs = (t.assignees||[]).map(a=>`<div class="avatar" title="${escapeHtml(a.name)}">${initials(a.name)}</div>`).join('');
+        return `<td><div class="avatars">${avs||'<span class="dash">—</span>'}</div></td>`;
+      }
+      case 'reviewer': return `<td>${personCellHtml(t.reviewer)}</td>`;
+      case 'start': return `<td>${fmtDate(t.startDate)||'<span class="dash">—</span>'}</td>`;
+      case 'due': return `<td>${fmtDate(t.dueDate)||'<span class="dash">—</span>'}</td>`;
+      case 'status': { const st=STATUS[t.status]||STATUS.notstarted; return `<td><span class="pill" style="background:${cssColor(st.color)}">${st.text}</span></td>`; }
+      case 'priority': { const pr=PRIORITY[t.priority]||PRIORITY.medium; return `<td><span class="pill" style="background:${cssColor(pr.color)}">${pr.text}</span></td>`; }
+      case 'labels': { const labs=(t.labels||[]).map(k=>LABELS.find(l=>l.key===k)).filter(Boolean); return `<td><div class="labelrow">${labs.map(l=>`<span class="pill" style="background:${cssColor(l.color)}">${l.text}</span>`).join('')||'<span class="dash">—</span>'}</div></td>`; }
+      case 'bucket': return `<td>${escapeHtml(t.bucket||'')||'<span class="dash">—</span>'}</td>`;
+      case 'progress': { const p=computePercent(t); return `<td><div class="progresswrap">${donutSvg(p,26,4)}<span class="progresstext">${p}%</span></div></td>`; }
+      default: return '<td></td>';
+    }
+  }
+
+  function renderGridTable(list, tbodyExtraClass){
+    const cols = columnOrder.filter(k=>COLS.find(c=>c.key===k));
+    const heads = cols.map(k=>{
+      const c = COLS.find(x=>x.key===k);
+      return `<th draggable="true" data-col="${k}">${c.label}</th>`;
+    }).join('');
+    const rows = list.length ? list.map(t=>`<tr class="datarow ${tbodyExtraClass||''}" data-id="${t.id}" draggable="${groupBy==='custom'}">${cols.map(k=>cellHtml(t,k)).join('')}</tr>`).join('')
+      : `<tr><td colspan="${cols.length}"><div class="empty">Nothing here.</div></td></tr>`;
+    return `<table class="gtable"><thead><tr>${heads}</tr></thead><tbody>${rows}</tbody></table>`;
+  }
+
+  function wireGridInteractions(host){
+    host.querySelectorAll('tr[data-id]').forEach(tr=>{
+      tr.addEventListener('click', (e)=>{ if(e.target.closest('.rowbtn')) return; openModal(tr.dataset.id); });
+      if(groupBy==='custom'){
+        tr.addEventListener('dragstart', e=>e.dataTransfer.setData('text/plain', tr.dataset.id));
+        tr.addEventListener('dragover', e=>{ e.preventDefault(); tr.classList.add('dragover'); });
+        tr.addEventListener('dragleave', ()=>tr.classList.remove('dragover'));
+        tr.addEventListener('drop', e=>{
+          e.preventDefault(); tr.classList.remove('dragover');
+          const draggedId = e.dataTransfer.getData('text/plain');
+          const targetId = tr.dataset.id;
+          if(draggedId===targetId) return;
+          let order = manualOrder.length ? manualOrder.slice() : tasks.map(t=>t.id);
+          order = order.filter(id=>id!==draggedId);
+          const idx = order.indexOf(targetId);
+          order.splice(idx, 0, draggedId);
+          manualOrder = order; saveRowOrder();
+          renderCurrentView();
+        });
+      }
+    });
+    host.querySelectorAll('th[data-col]').forEach(th=>{
+      th.addEventListener('dragstart', e=>e.dataTransfer.setData('text/plain', th.dataset.col));
+      th.addEventListener('dragover', e=>{ e.preventDefault(); th.classList.add('dragover'); });
+      th.addEventListener('dragleave', ()=>th.classList.remove('dragover'));
+      th.addEventListener('drop', e=>{
+        e.preventDefault(); th.classList.remove('dragover');
+        const draggedKey = e.dataTransfer.getData('text/plain');
+        const targetKey = th.dataset.col;
+        if(draggedKey===targetKey) return;
+        const from = columnOrder.indexOf(draggedKey), to = columnOrder.indexOf(targetKey);
+        columnOrder.splice(from,1); columnOrder.splice(to,0,draggedKey);
+        saveColOrder(); renderCurrentView();
+      });
+    });
+  }
+
+  function renderGrid(){
+    const notStarted = sortedList(filtered().filter(t=>t.status==='notstarted'));
+    const inProgress = sortedList(filtered().filter(t=>t.status==='inprogress'));
+    $('gridView').innerHTML = `
+      <div class="gridsection">
+        <div class="gridsection-head">not started <span class="gridsection-count">${notStarted.length}</span></div>
+        ${renderGridTable(notStarted)}
+      </div>
+      <div class="gridsection">
+        <div class="gridsection-head">in progress <span class="gridsection-count">${inProgress.length}</span></div>
+        ${renderGridTable(inProgress)}
+      </div>
+    `;
+    wireGridInteractions($('gridView'));
+
+    const completed = sortedList(completedOnly(filtered()));
+    $('completedCount').textContent = completed.length;
+    $('completedBar').style.display = completed.length ? 'block' : 'none';
+    $('completedBody').innerHTML = renderGridTable(completed);
+    if(completedOpen) wireGridInteractions($('completedBody'));
+  }
+
+  /* ---------------- board ---------------- */
+  function groupColumns(items){
+    if(groupBy==='status') return Object.keys(STATUS).filter(k=>k!=='completed').map(k=>({key:k,label:STATUS[k].text,color:STATUS[k].color, items:items.filter(t=>t.status===k)}));
+    if(groupBy==='priority') return Object.keys(PRIORITY).map(k=>({key:k,label:PRIORITY[k].text,color:PRIORITY[k].color, items:items.filter(t=>t.priority===k)}));
+    if(groupBy==='bucket') return buckets.map(b=>({key:b,label:b,color:'var(--blue)', items:items.filter(t=>t.bucket===b)})).concat([{key:'__none',label:'No job type',color:'var(--l-notstarted)', items:items.filter(t=>!t.bucket)}]);
+    if(groupBy==='labels') return LABELS.map(l=>({key:l.key,label:l.text,color:l.color, items:items.filter(t=>(t.labels||[]).includes(l.key))})).concat([{key:'__none',label:'No label',color:'var(--l-notstarted)', items:items.filter(t=>!(t.labels||[]).length)}]);
+    if(groupBy==='assignee'){
+      const names = Array.from(new Set(items.flatMap(t=>(t.assignees||[]).map(a=>a.name))));
+      return names.map(n=>({key:n,label:n,color:'var(--blue)', items:items.filter(t=>(t.assignees||[]).some(a=>a.name===n))})).concat([{key:'__none',label:'Unassigned',color:'var(--l-notstarted)', items:items.filter(t=>!(t.assignees||[]).length)}]);
+    }
+    if(groupBy==='due'){
+      const groups={}; items.forEach(t=>{ const g=monthGroup(t.dueDate); (groups[g]=groups[g]||[]).push(t); });
+      return Object.keys(groups).map(k=>({key:k,label:k,color:'var(--blue)', items:groups[k]}));
+    }
+    return [{key:'all',label:'All',color:'var(--blue)', items}];
+  }
+
+  function renderBoard(){
+    const items = activeOnly(filtered());
+    let cols = groupColumns(items);
+    if(sortDir===-1) cols = cols.slice().reverse();
+    $('boardView').innerHTML = cols.map(c=>`
+      <div class="col">
+        <div class="col-head"><span class="swatch" style="background:${cssColor(c.color)}"></span><span class="title">${escapeHtml(c.label)}</span><span class="count">${c.items.length}</span></div>
+        ${c.items.length ? c.items.map(cardHtml).join('') : '<div class="empty">Nothing here</div>'}
+      </div>`).join('');
+    $('boardView').querySelectorAll('.card').forEach(el=>el.addEventListener('click', ()=>openModal(el.dataset.id)));
+
+    const completed = completedOnly(filtered());
+    $('boardCompletedCount').textContent = completed.length;
+    $('boardCompletedBar').style.display = completed.length ? 'block' : 'none';
+    $('boardCompletedBody').innerHTML = completed.map(t=>`<div style="width:250px;">${cardHtml(t)}</div>`).join('');
+    $('boardCompletedBody').querySelectorAll('.card').forEach(el=>el.addEventListener('click', ()=>openModal(el.dataset.id)));
+  }
+
+  function cardHtml(t){
+    const pr = PRIORITY[t.priority]||PRIORITY.medium;
+    const labs = (t.labels||[]).map(k=>LABELS.find(l=>l.key===k)).filter(Boolean);
+    const avs = (t.assignees||[]).map(a=>`<div class="avatar" title="${escapeHtml(a.name)}">${initials(a.name)}</div>`).join('');
+    const p = computePercent(t);
+    return `
+      <div class="card" data-id="${t.id}">
+        <p class="ptitle">${escapeHtml(t.title)}</p>
+        <div class="cardlabels">${labs.map(l=>`<span class="pill" style="background:${cssColor(l.color)}">${l.text}</span>`).join('')}</div>
+        <div class="pmeta">
+          <span class="pill" style="background:${cssColor(pr.color)}">${pr.text}</span>
+          ${t.dueDate ? `<span>📅 ${fmtDate(t.dueDate)}</span>` : ''}
+          <div class="avatars">${avs}</div>
+          <div class="progresswrap">${donutSvg(p,20,3)}<span class="progresstext">${p}%</span></div>
+        </div>
+      </div>`;
+  }
+
+  /* ---------------- modal / draft ---------------- */
+  function blankTask(){
+    return { id:uid(), title:'', description:'', status:'notstarted', priority:'medium', bucket:buckets[0]||'', labels:['notstarted'],
+      assignees:[], reviewer:null, startDate:'', dueDate:'', attachments:[], comments:[], reviewComments:[], activity:[],
+      createdAt:Date.now(), updatedAt:Date.now(), _new:true };
+  }
+
+  function openModal(id){
+    draft = id ? tasks.find(t=>t.id===id) : blankTask();
+    if(id) draft._new=false;
+    $('mTitle').value = draft.title||'';
+    $('mDesc').value = draft.description||'';
+    $('mStatus').value = draft.status||'notstarted';
+    $('mPriority').value = draft.priority||'medium';
+    $('mBucket').innerHTML = buckets.map(b=>`<option value="${escapeHtml(b)}">${escapeHtml(b)}</option>`).join('') + `<option value="__add">+ add new job type…</option>`;
+    $('mBucket').value = draft.bucket || buckets[0] || '';
+    $('mStart').value = draft.startDate||'';
+    $('mDue').value = draft.dueDate||'';
+    $('deleteConfirm').classList.remove('show');
+    $('bucketMiniHost').innerHTML = '';
+    $('modalDonut').innerHTML = donutSvg(computePercent(draft),50,5) + `<div class="pct">${computePercent(draft)}%</div>`;
+    renderLabelPicker(); renderAssignees(); renderReviewer();
+    renderAttachments(); renderComments(); renderReviewComments(); renderActivity();
+    $('overlay').classList.add('show');
+    setTimeout(()=>$('mTitle').focus(),50);
+  }
+  function closeModalFn(){ $('overlay').classList.remove('show'); draft=null; }
+  function refreshDonut(){ $('modalDonut').innerHTML = donutSvg(computePercent(draft),50,5) + `<div class="pct">${computePercent(draft)}%</div>`; }
+
+  function commit(activityText){
+    if(!draft || !draft.title || !draft.title.trim()) return;
+    draft.updatedAt = Date.now();
+    if(activityText){ draft.activity = draft.activity||[]; draft.activity.unshift({id:uid(), text:activityText, createdAt:Date.now()}); }
+    if(draft._new){ draft._new=false; tasks.push(draft); } else {
+      const idx = tasks.findIndex(t=>t.id===draft.id); if(idx>=0) tasks[idx]=draft; else tasks.push(draft);
+    }
+    saveTask(draft); renderCurrentView(); refreshDonut();
+  }
+
+  function renderLabelPicker(){
+    $('labelPicker').innerHTML = LABELS.map(l=>{
+      const on = (draft.labels||[]).includes(l.key);
+      return `<div class="labelchip ${on?'on':''}" data-key="${l.key}" style="${on?`background:${cssColor(l.color)};`:''}"><span class="dot" style="background:${cssColor(l.color)}"></span>${l.text}</div>`;
+    }).join('');
+    $('labelPicker').querySelectorAll('.labelchip').forEach(chip=>{
+      chip.addEventListener('click', ()=>{
+        const key = chip.dataset.key;
+        draft.labels = draft.labels||[];
+        const has = draft.labels.includes(key);
+        draft.labels = has ? draft.labels.filter(k=>k!==key) : draft.labels.concat([key]);
+        const lab = LABELS.find(l=>l.key===key);
+        commit(`${me.name||'Someone'} ${has?'removed':'added'} the "${lab.text}" label`);
+        renderLabelPicker();
+      });
+    });
+  }
+
+  function renderAssignees(){
+    $('assignWrap').innerHTML = (draft.assignees||[]).map(a=>`
+      <div class="achip"><div class="avatar">${initials(a.name)}</div>${escapeHtml(a.name)}<button class="x" data-name="${escapeHtml(a.name)}">&times;</button></div>
+    `).join('') || '<span style="font-size:12.5px;color:var(--muted);">No one assigned yet.</span>';
+    $('assignWrap').querySelectorAll('.x').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        draft.assignees = (draft.assignees||[]).filter(a=>a.name!==btn.dataset.name);
+        commit(`${me.name||'Someone'} removed ${btn.dataset.name} from this task`);
+        renderAssignees();
+      });
+    });
+  }
+
+  function renderReviewer(){
+    $('reviewerWrap').innerHTML = draft.reviewer ? `<div class="achip"><div class="avatar">${initials(draft.reviewer.name)}</div>${escapeHtml(draft.reviewer.name)}<button class="x" id="reviewerX">&times;</button></div>` : '<span style="font-size:12.5px;color:var(--muted);">No reviewer set.</span>';
+    const x = $('reviewerX'); if(x) x.addEventListener('click', ()=>{ draft.reviewer=null; commit(`${me.name||'Someone'} removed the reviewer from this task`); renderReviewer(); });
+  }
+
+  const ATT_ICONS = { image:'🖼️', pdf:'📄', doc:'📝', sheet:'📊', slides:'📈', zip:'🗜️', file:'📎', link:'🔗' };
+  function fmtSize(bytes){
+    if(!bytes && bytes!==0) return '';
+    if(bytes < 1024) return `${bytes} B`;
+    if(bytes < 1024*1024) return `${Math.round(bytes/1024)} KB`;
+    return `${(bytes/(1024*1024)).toFixed(1)} MB`;
+  }
+  function renderAttachments(){
+    const atts = draft.attachments||[];
+    $('attList').innerHTML = atts.map(a=>{
+      const href = a.url || a.dataUrl || '#';
+      const meta = a.size ? ` <span class="attsize">${fmtSize(a.size)}</span>` : '';
+      if(a.kind==='image') return `<div class="att"><img src="${href}"><a href="${href}" target="_blank" rel="noopener">${escapeHtml(a.label)}</a>${meta}<button class="rm" data-aid="${a.id}">&times;</button></div>`;
+      const icon = ATT_ICONS[a.kind] || ATT_ICONS.file;
+      return `<div class="att"><span class="ic">${icon}</span><a href="${href}" target="_blank" rel="noopener">${escapeHtml(a.label)}</a>${meta}<button class="rm" data-aid="${a.id}">&times;</button></div>`;
+    }).join('');
+    $('attList').querySelectorAll('.rm').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const att = (draft.attachments||[]).find(x=>x.id===btn.dataset.aid);
+        if(att && att.path) deleteStoredFile(att.path);
+        draft.attachments = (draft.attachments||[]).filter(x=>x.id!==btn.dataset.aid);
+        commit(`${me.name||'Someone'} removed an attachment`);
+        renderAttachments();
+      });
+    });
+  }
+  function showMiniForm(){
+    $('attachMiniHost').innerHTML = `
+      <div class="attach-mini">
+        <input type="text" id="miniLabel" placeholder="Label, e.g. brand guidelines">
+        <input type="text" id="miniUrl" placeholder="Paste the link">
+        <button type="button" class="go" id="miniGo">Add</button>
+      </div>`;
+    $('miniGo').addEventListener('click', ()=>{
+      const label = $('miniLabel').value.trim() || 'Link';
+      const url = $('miniUrl').value.trim();
+      if(!url){ $('miniUrl').focus(); return; }
+      if(!draft.title||!draft.title.trim()){ toast('Give the task a title first.'); return; }
+      draft.attachments = draft.attachments||[];
+      draft.attachments.push({id:uid(), kind:'link', label, url});
+      commit(`${me.name||'Someone'} added an attachment: ${label}`);
+      $('attachMiniHost').innerHTML=''; renderAttachments();
+    });
+  }
+
+  function renderComments(){
+    const list = draft.comments||[];
+    const box = $('chatBox');
+    const wasNearBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 40;
+    if(list.length===0){
+      box.innerHTML = '<div class="chatempty">No messages yet — say hello.</div>';
+      return;
+    }
+    box.innerHTML = list.map(c=>{
+      const mine = me.name && c.author.toLowerCase()===me.name.trim().toLowerCase();
+      return `
+        <div class="chatmsg ${mine?'mine':''}">
+          <div class="avatar">${initials(c.author)}</div>
+          <div>
+            <div class="who">${escapeHtml(c.author)}</div>
+            <div class="bubble"><div class="txt">${escapeHtml(c.text)}</div></div>
+            <div class="time">${timeAgo(c.createdAt)}</div>
+          </div>
+        </div>`;
+    }).join('');
+    if(wasNearBottom || list[list.length-1].author===me.name) box.scrollTop = box.scrollHeight;
+  }
+  function renderReviewComments(){
+    const list = draft.reviewComments||[];
+    if(list.length===0){
+      $('reviewList').innerHTML = '<div class="amendempty">No amends yet — a posted review comment turns into a card here.</div>';
+      return;
+    }
+    $('reviewList').innerHTML = list.slice().reverse().map(c=>`
+      <div class="amendcard ${c.done?'done':''}" data-id="${c.id}">
+        ${c.done ? '<span class="donepill">Complete</span>' : ''}
+        <div class="check">${c.done ? '<svg viewBox="0 0 16 16" fill="none"><path d="M2 8.5L6 12.5L14 3.5" stroke="white" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>' : ''}</div>
+        <div class="txt">${escapeHtml(c.text)}</div>
+        <div class="meta">${escapeHtml(c.author)} · ${fmtDate(new Date(c.createdAt).toISOString().slice(0,10))}</div>
+      </div>`).join('');
+    $('reviewList').querySelectorAll('.amendcard').forEach(card=>{
+      card.addEventListener('click', ()=>openAmend(card.dataset.id));
+    });
+  }
+
+  let openAmendId = null;
+  function openAmend(id){
+    const c = (draft.reviewComments||[]).find(x=>x.id===id);
+    if(!c) return;
+    openAmendId = id;
+    $('amendMeta').textContent = `${c.author} · ${fmtDate(new Date(c.createdAt).toISOString().slice(0,10))}${c.done ? ` · marked done by ${c.completedBy||'—'}` : ''}`;
+    $('amendTxt').textContent = c.text;
+    const btn = $('amendToggleBtn');
+    btn.textContent = c.done ? '↺ mark as not done' : '✓ mark as done';
+    btn.classList.toggle('undo', !!c.done);
+    $('amendOverlay').classList.add('show');
+  }
+  function closeAmend(){ $('amendOverlay').classList.remove('show'); openAmendId = null; }
+  function toggleAmendDone(){
+    const c = (draft.reviewComments||[]).find(x=>x.id===openAmendId);
+    if(!c) return;
+    c.done = !c.done;
+    c.completedBy = c.done ? (me.name||'Someone') : null;
+    c.completedAt = c.done ? Date.now() : null;
+    commit(`${me.name||'Someone'} marked an amend "${c.text.slice(0,40)}${c.text.length>40?'…':''}" as ${c.done?'done':'not done'}`);
+    const isReviewer = draft.reviewer && draft.reviewer.name && me.name && draft.reviewer.name.toLowerCase()===me.name.trim().toLowerCase();
+    const recipients = c.done
+      ? (isReviewer ? (draft.assignees||[]).map(a=>a.name) : (draft.reviewer&&draft.reviewer.name?[draft.reviewer.name]:[]))
+      : [];
+    if(c.done) notifyPeople(recipients, draft.id, draft.title, `${me.name||'Someone'} completed an amend on "${draft.title}"`);
+    renderReviewComments(); renderActivity(); closeAmend();
+  }
+
+  function renderActivity(){
+    const list = draft.activity||[];
+    $('activityList').innerHTML = list.length ? list.slice(0,14).map(a=>`<div class="activity">${escapeHtml(a.text)} · ${timeAgo(a.createdAt)}</div>`).join('') : '<div class="empty" style="text-align:left;padding:6px 0;">No activity yet.</div>';
+  }
+
+  /* ---------------- live chat polling ---------------- */
+  async function pollChat(){
+    if(!draft || !$('overlay').classList.contains('show')) return;
+    try{
+      const rows = await sbSelect('tasks', `select=data&id=eq.${encodeURIComponent(draft.id)}`);
+      if(!rows || !rows.length) return;
+      const latestTask = rows[0].data || {};
+      if(JSON.stringify(latestTask.comments||[]) !== JSON.stringify(draft.comments||[])){
+        draft.comments = latestTask.comments || [];
+        const idx = tasks.findIndex(t=>t.id===draft.id);
+        if(idx>=0) tasks[idx].comments = draft.comments;
+        renderComments();
+      }
+      if(JSON.stringify(latestTask.reviewComments||[]) !== JSON.stringify(draft.reviewComments||[])){
+        draft.reviewComments = latestTask.reviewComments || [];
+        const idx = tasks.findIndex(t=>t.id===draft.id);
+        if(idx>=0) tasks[idx].reviewComments = draft.reviewComments;
+        renderReviewComments();
+      }
+      if(JSON.stringify(latestTask.activity||[]) !== JSON.stringify(draft.activity||[])){
+        draft.activity = latestTask.activity || draft.activity;
+        renderActivity();
+      }
+    } catch(e){ /* silent — next poll will retry */ }
+  }
+
+  async function pollNotifications(){
+    if(!me.name) return;
+    try{
+      const rows = await sbSelect('notifications','select=*&order=created_at.desc');
+      notifications = rows.map(r=>({ id:r.id, recipient:r.recipient, taskId:r.task_id, taskTitle:r.task_title, message:r.message, readBy:r.read_by||[], createdAt:new Date(r.created_at).getTime() }));
+      renderBell();
+    } catch(e){ /* silent — next poll will retry */ }
+  }
+
+  /* ---------------- view switching ---------------- */
+  function renderCurrentView(){ view==='grid' ? renderGrid() : renderBoard(); }
+
+  /* ---------------- wiring ---------------- */
+  document.addEventListener('DOMContentLoaded', async ()=>{
+    await loadAll();
+    refreshKnownNames();
+    renderCurrentView();
+    renderBell();
+
+    $('tabGrid').addEventListener('click', ()=>{ view='grid'; $('tabGrid').classList.add('active'); $('tabBoard').classList.remove('active'); $('gridView').style.display='block'; $('completedBar').style.display=''; $('boardView').style.display='none'; $('boardCompletedBar').style.display='none'; renderGrid(); });
+    $('tabBoard').addEventListener('click', ()=>{ view='board'; $('tabBoard').classList.add('active'); $('tabGrid').classList.remove('active'); $('gridView').style.display='none'; $('completedBar').style.display='none'; $('boardView').style.display='flex'; renderBoard(); });
+
+    $('searchInput').addEventListener('input', ()=>{ search=$('searchInput').value; renderCurrentView(); });
+    $('groupBy').addEventListener('change', ()=>{ groupBy=$('groupBy').value; renderCurrentView(); });
+    $('dirBtn').addEventListener('click', ()=>{ sortDir = sortDir===1?-1:1; $('dirBtn').textContent = sortDir===1?'↑':'↓'; renderCurrentView(); });
+
+    $('completedToggle').addEventListener('click', ()=>{
+      completedOpen=!completedOpen;
+      $('completedToggle').classList.toggle('open', completedOpen);
+      $('completedBody').classList.toggle('open', completedOpen);
+      if(completedOpen) wireGridInteractions($('completedBody'));
+    });
+    $('boardCompletedToggle').addEventListener('click', ()=>{
+      boardCompletedOpen=!boardCompletedOpen;
+      $('boardCompletedToggle').classList.toggle('open', boardCompletedOpen);
+      $('boardCompletedBody').classList.toggle('open', boardCompletedOpen);
+    });
+
+    $('newBtn').addEventListener('click', ()=>openModal(null));
+    $('closeModal').addEventListener('click', closeModalFn);
+    $('scrim').addEventListener('click', ()=>{ closeModalFn(); closeNotifPanel(); });
+
+    $('bellBtn').addEventListener('click', openNotifPanel);
+    $('closeNpanel').addEventListener('click', closeNotifPanel);
+    $('markAllBtn').addEventListener('click', ()=>{
+      if(!me.name) return;
+      myNotifications().forEach(n=>{ if(!isRead(n)) n.readBy.push(me.name); });
+      saveNotifications(); renderBell(); renderNotifPanel();
+    });
+
+    $('mTitle').addEventListener('change', ()=>{ draft.title=$('mTitle').value.trim(); commit(); refreshKnownNames(); });
+    $('mDesc').addEventListener('change', ()=>{ draft.description=$('mDesc').value; commit(); });
+    $('mStatus').addEventListener('change', ()=>{
+      const from=STATUS[draft.status].text, to=STATUS[$('mStatus').value].text;
+      draft.status=$('mStatus').value;
+      commit(`${me.name||'Someone'} changed status from ${from} to ${to}`);
+      renderActivity();
+      if(draft.status==='completed') closeModalFn();
+    });
+    $('mPriority').addEventListener('change', ()=>{
+      const to=PRIORITY[$('mPriority').value].text;
+      draft.priority=$('mPriority').value;
+      commit(`${me.name||'Someone'} set priority to ${to}`);
+      renderActivity();
+    });
+    $('mBucket').addEventListener('change', ()=>{
+      if($('mBucket').value==='__add'){
+        $('bucketMiniHost').innerHTML = `
+          <div class="bucket-mini">
+            <input type="text" id="newBucketInput" placeholder="New job type name" autofocus>
+            <button type="button" id="newBucketGo">Add</button>
+          </div>`;
+        $('mBucket').value = draft.bucket || buckets[0] || '';
+        const input = $('newBucketInput'); input.focus();
+        const addIt = ()=>{
+          const nb = input.value.trim();
+          if(!nb) return;
+          buckets.push(nb); saveBuckets(); draft.bucket = nb;
+          $('mBucket').innerHTML = buckets.map(b=>`<option value="${escapeHtml(b)}">${escapeHtml(b)}</option>`).join('') + `<option value="__add">+ add new job type…</option>`;
+          $('mBucket').value = draft.bucket;
+          $('bucketMiniHost').innerHTML = '';
+          commit(`${me.name||'Someone'} moved this to ${draft.bucket}`);
+          renderActivity();
+        };
+        $('newBucketGo').addEventListener('click', addIt);
+        input.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); addIt(); } });
+        return;
+      }
+      draft.bucket = $('mBucket').value;
+      commit(`${me.name||'Someone'} moved this to ${draft.bucket}`);
+      renderActivity();
+    });
+    $('mStart').addEventListener('change', ()=>{ draft.startDate=$('mStart').value; commit(); });
+    $('mDue').addEventListener('change', ()=>{
+      draft.dueDate=$('mDue').value;
+      commit(`${me.name||'Someone'} set the due date to ${draft.dueDate||'—'}`);
+      renderActivity();
+    });
+
+    $('assignAddBtn').addEventListener('click', ()=>{
+      const name = $('assignInput').value.trim(); if(!name) return;
+      draft.assignees = draft.assignees||[];
+      if(draft.assignees.some(a=>a.name.toLowerCase()===name.toLowerCase())){ $('assignInput').value=''; return; }
+      upsertPerson(name);
+      draft.assignees.push({ name });
+      commit(`${me.name||'Someone'} assigned ${name}`);
+      $('assignInput').value=''; renderAssignees(); refreshKnownNames();
+    });
+
+    $('reviewerAddBtn').addEventListener('click', ()=>{
+      const name = $('reviewerInput').value.trim(); if(!name) return;
+      upsertPerson(name);
+      draft.reviewer = { name };
+      commit(`${me.name||'Someone'} set the reviewer to ${name}`);
+      $('reviewerInput').value=''; renderReviewer(); refreshKnownNames();
+    });
+
+    $('addLinkBtn').addEventListener('click', ()=>showMiniForm());
+    $('addFileBtn').addEventListener('click', ()=>{
+      if(!draft.title||!draft.title.trim()){ toast('Give the task a title first.'); return; }
+      $('fileInput').click();
+    });
+    $('fileInput').addEventListener('change', async (e)=>{
+      const file = e.target.files[0]; e.target.value=''; if(!file) return;
+      if(!draft.title||!draft.title.trim()){ toast('Give the task a title first.'); return; }
+      if(file.size > MAX_FILE_MB*1024*1024){ toast(`That file is over ${MAX_FILE_MB}MB. Use "add link" for anything bigger.`); return; }
+      const uploaded = await uploadFile(file);
+      if(!uploaded) return;
+      draft.attachments = draft.attachments||[];
+      draft.attachments.push(uploaded);
+      commit(`${me.name||'Someone'} uploaded ${file.name}`);
+      renderAttachments();
+    });
+
+    function sendChatMessage(){
+      if(!draft.title||!draft.title.trim()){ toast('Give the task a title first.'); return; }
+      const text = $('chatInput').value.trim(); if(!text) return;
+      draft.comments = draft.comments||[];
+      draft.comments.push({id:uid(), author:me.name||'Someone', text, createdAt:Date.now()});
+      commit(`${me.name||'Someone'} sent a chat message`);
+      notifyTeam(`${me.name||'Someone'} sent a chat message on "${draft.title}"`);
+      $('chatInput').value=''; renderComments(); renderActivity();
+    }
+    $('chatBtn').addEventListener('click', sendChatMessage);
+    $('chatInput').addEventListener('keydown', (e)=>{
+      if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendChatMessage(); }
+    });
+
+    $('reviewBtn').addEventListener('click', ()=>{
+      if(!draft.title||!draft.title.trim()){ toast('Give the task a title first.'); return; }
+      const text = $('reviewInput').value.trim(); if(!text) return;
+      draft.reviewComments = draft.reviewComments||[];
+      draft.reviewComments.push({id:uid(), author:me.name||'Someone', text, createdAt:Date.now(), done:false, completedBy:null, completedAt:null});
+      commit(`${me.name||'Someone'} added an amend`);
+      const isReviewer = draft.reviewer && draft.reviewer.name && me.name && draft.reviewer.name.toLowerCase()===me.name.trim().toLowerCase();
+      const recipients = isReviewer ? (draft.assignees||[]).map(a=>a.name) : (draft.reviewer && draft.reviewer.name ? [draft.reviewer.name] : []);
+      notifyPeople(recipients, draft.id, draft.title, `${me.name||'Someone'} added an amend on "${draft.title}"`);
+      $('reviewInput').value=''; renderReviewComments(); renderActivity();
+    });
+
+    $('amendClose').addEventListener('click', closeAmend);
+    $('amendToggleBtn').addEventListener('click', toggleAmendDone);
+    $('amendOverlay').addEventListener('click', (e)=>{ if(e.target.id==='amendOverlay') closeAmend(); });
+
+    $('deleteBtn').addEventListener('click', ()=>{
+      if(!draft) return;
+      if(draft._new){ closeModalFn(); return; }
+      $('deleteConfirmText').textContent = `Delete "${draft.title}"? This can't be undone.`;
+      $('deleteConfirm').classList.add('show');
+    });
+    $('deleteConfirmCancel').addEventListener('click', ()=>$('deleteConfirm').classList.remove('show'));
+    $('deleteConfirmGo').addEventListener('click', ()=>{
+      if(!draft) return;
+      const id = draft.id;
+      tasks = tasks.filter(t=>t.id!==id);
+      deleteTaskRow(id);
+      $('deleteConfirm').classList.remove('show');
+      closeModalFn();
+      renderCurrentView();
+      toast('Task deleted.');
+    });
+
+    setInterval(pollChat, 4000);
+    setInterval(pollNotifications, 15000);
+  });
+
+})();
+</script>
+
+</body>
+</html>
