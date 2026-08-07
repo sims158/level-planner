@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>level | planner</title>
+<link rel="icon" type="image/png" href="images/level-planner-icon.png">
+<link rel="apple-touch-icon" href="images/level-planner-icon.png">
+<meta name="theme-color" content="#e6266c">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -252,7 +255,7 @@
   .loginoverlay{ position:fixed; inset:0; background:var(--pink); display:none; align-items:center; justify-content:center; padding:24px; z-index:200; }
   .loginoverlay.show{ display:flex; }
   .loginbox{ background:#fff; border-radius:20px; padding:38px 34px 30px; width:100%; max-width:380px; text-align:center; }
-  .loginmark{ width:44px; height:44px; border-radius:12px; background:var(--pink); color:#fff; font-size:1.75rem; font-weight:900; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; }
+  .loginmark{ width:58px; height:58px; object-fit:contain; display:block; margin:0 auto 18px; }
   .loginbox h1{ font-size:1.375rem; font-weight:800; margin:0 0 8px; color:var(--ink); }
   .loginbox p{ font-size:0.9375rem; color:var(--muted); margin:0 0 22px; line-height:1.5; }
   .loginbox input{ width:100%; border:1.5px solid var(--line); border-radius:10px; padding:12px 14px; font-size:1rem; font-family:inherit; margin-bottom:12px; }
@@ -268,7 +271,7 @@
 
   <div class="loginoverlay show" id="loginOverlay">
     <div class="loginbox">
-      <div class="loginmark">l</div>
+      <img class="loginmark" src="images/level-planner-icon.png" alt="Level">
       <h1>level | planner</h1>
       <p>Pop your name in so everyone knows who's left which note.</p>
       <input type="text" id="loginNameInput" list="knownNames" placeholder="Your name" autocomplete="name">
