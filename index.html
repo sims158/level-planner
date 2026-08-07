@@ -735,8 +735,11 @@
     switch(key){
       case 'title': return `<td class="taskname">${escapeHtml(t.title)}</td>`;
       case 'assignee': {
-        const avs = (t.assignees||[]).map(a=>`<div class="avatar" title="${escapeHtml(a.name)}">${initials(a.name)}</div>`).join('');
-        return `<td><div class="avatars">${avs||'<span class="dash">—</span>'}</div></td>`;
+        const as = t.assignees||[];
+        if(!as.length) return `<td><span class="dash">—</span></td>`;
+        if(as.length===1) return `<td>${personCellHtml(as[0])}</td>`;
+        const avs = as.map(a=>`<div class="avatar" title="${escapeHtml(a.name)}">${initials(a.name)}</div>`).join('');
+        return `<td><div class="avatars">${avs}</div></td>`;
       }
       case 'reviewer': return `<td>${personCellHtml(t.reviewer)}</td>`;
       case 'start': return `<td>${fmtDate(t.startDate)||'<span class="dash">—</span>'}</td>`;
