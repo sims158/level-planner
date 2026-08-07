@@ -148,8 +148,10 @@
   .attach-mini .go{ background:var(--blue); color:#fff; border:none; border-radius:8px; padding:0 12px; font-size:12.5px; font-weight:700; }
   .attlist{ display:flex; flex-direction:column; gap:6px; margin-bottom:4px; }
   .att{ display:flex; align-items:center; gap:9px; background:#fcfbfc; border:1px solid var(--line); border-radius:9px; padding:8px 10px; font-size:12.5px; }
-  .att img{ width:30px; height:30px; object-fit:cover; border-radius:6px; flex:none; }
+  .att img.thumb{ width:30px; height:30px; object-fit:cover; border-radius:6px; flex:none; }
   .att .ic{ width:30px; height:30px; border-radius:6px; background:var(--cloud); display:flex; align-items:center; justify-content:center; flex:none; color:var(--blue-deep); }
+  .fileicon{ display:inline-block; vertical-align:middle; }
+  img.fileicon{ object-fit:contain; }
   .att a{ color:var(--ink); text-decoration:none; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .att .attsize{ color:var(--muted); font-size:11.5px; flex:none; }
   .filechips{ display:flex; align-items:center; gap:5px; flex-wrap:wrap; }
@@ -752,10 +754,11 @@
         const atts = t.attachments||[];
         if(!atts.length) return `<td><span class="dash">—</span></td>`;
         const counts = {};
-        atts.forEach(a=>{ const k=a.kind||'file'; counts[k]=(counts[k]||0)+1; });
+        atts.forEach(a=>{ const k=iconKeyFor(a); counts[k]=(counts[k]||0)+1; });
         const chips = Object.keys(counts).map(k=>{
-          const label = `${counts[k]} ${ATT_NAMES[k]||'file'}${counts[k]>1?'s':''}`;
-          return `<span class="filechip" title="${label}">${ATT_ICONS[k]||ATT_ICONS.file}${counts[k]>1?`<span class="n">${counts[k]}</span>`:''}</span>`;
+          const n = counts[k];
+          const title = `${n} ${iconLabel(k)}${n>1?'s':''}`;
+          return `<span class="filechip" title="${title}">${iconHtml(k,17)}${n>1?`<span class="n">${n}</span>`:''}</span>`;
         }).join('');
         return `<td><div class="filechips">${chips}</div></td>`;
       }
@@ -966,8 +969,34 @@
     const x = $('reviewerX'); if(x) x.addEventListener('click', ()=>{ draft.reviewer=null; commit(`${me.name||'Someone'} removed the reviewer from this task`); renderReviewer(); });
   }
 
-  const ATT_ICONS = { image:'🖼️', pdf:'📄', doc:'📝', sheet:'📊', slides:'📈', zip:'🗜️', file:'📎', link:'🔗' };
+  /* ---------------- file type icons ---------------- */
+  const ICON_BASE = 'images/file-icons/svg/';
+  // Extension -> the filename suffix used in images/file-icons/svg/
+  const ICON_FILES = {
+    ai:'AI', csv:'CSV', doc:'DOC', docx:'DOCX', eps:'EPS', gif:'GIF', html:'HTML',
+    jpeg:'JPEG', jpg:'JPG', mp4:'MP4', mps:'MPS', pdf:'PDF', png:'PNG', ppt:'PPT',
+    pptx:'PPTX', psd:'PSD', rar:'RAR', raw:'RAW', svg:'SVG', swf:'SWF', tiff:'TIFF',
+    tif:'TIFF', txt:'TXT', xls:'XLS', xlsx:'XLSX', zip:'ZIP'
+  };
   const ATT_NAMES = { image:'image', pdf:'PDF', doc:'Word doc', sheet:'spreadsheet', slides:'presentation', zip:'archive', file:'file', link:'link' };
+
+  function extOf(name){ return ((name||'').split('.').pop()||'').toLowerCase(); }
+  function iconKeyFor(att){
+    if(att.kind==='link' && !att.path) return 'link';
+    const e = extOf(att.label);
+    return ICON_FILES[e] ? e : 'file';
+  }
+  function iconHtml(key, size){
+    const px = size||16;
+    if(ICON_FILES[key]) return `<img class="fileicon" src="${ICON_BASE}file-icons-${ICON_FILES[key]}.svg" alt="${key.toUpperCase()}" style="width:${px}px;height:${px}px">`;
+    if(key==='link') return `<span class="fileicon emoji" style="font-size:${px-2}px">🔗</span>`;
+    return `<span class="fileicon emoji" style="font-size:${px-2}px">📎</span>`;
+  }
+  function iconLabel(key){
+    if(key==='link') return 'link';
+    if(key==='file') return 'file';
+    return key.toUpperCase();
+  }
   function fmtSize(bytes){
     if(!bytes && bytes!==0) return '';
     if(bytes < 1024) return `${bytes} B`;
@@ -979,9 +1008,8 @@
     $('attList').innerHTML = atts.map(a=>{
       const href = a.url || a.dataUrl || '#';
       const meta = a.size ? ` <span class="attsize">${fmtSize(a.size)}</span>` : '';
-      if(a.kind==='image') return `<div class="att"><img src="${href}"><a href="${href}" target="_blank" rel="noopener">${escapeHtml(a.label)}</a>${meta}<button class="rm" data-aid="${a.id}">&times;</button></div>`;
-      const icon = ATT_ICONS[a.kind] || ATT_ICONS.file;
-      return `<div class="att"><span class="ic">${icon}</span><a href="${href}" target="_blank" rel="noopener">${escapeHtml(a.label)}</a>${meta}<button class="rm" data-aid="${a.id}">&times;</button></div>`;
+      if(a.kind==='image' && href!=='#') return `<div class="att"><img class="thumb" src="${href}"><a href="${href}" target="_blank" rel="noopener">${escapeHtml(a.label)}</a>${meta}<button class="rm" data-aid="${a.id}">&times;</button></div>`;
+      return `<div class="att"><span class="ic">${iconHtml(iconKeyFor(a), 20)}</span><a href="${href}" target="_blank" rel="noopener">${escapeHtml(a.label)}</a>${meta}<button class="rm" data-aid="${a.id}">&times;</button></div>`;
     }).join('');
     $('attList').querySelectorAll('.rm').forEach(btn=>{
       btn.addEventListener('click', ()=>{
