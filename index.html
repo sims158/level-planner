@@ -152,6 +152,9 @@
   .att .ic{ width:30px; height:30px; border-radius:6px; background:var(--cloud); display:flex; align-items:center; justify-content:center; flex:none; color:var(--blue-deep); }
   .att a{ color:var(--ink); text-decoration:none; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .att .attsize{ color:var(--muted); font-size:11.5px; flex:none; }
+  .filechips{ display:flex; align-items:center; gap:5px; flex-wrap:wrap; }
+  .filechip{ display:inline-flex; align-items:center; gap:2px; font-size:14px; line-height:1; }
+  .filechip .n{ font-size:10.5px; font-weight:700; color:var(--muted); }
   .att .rm{ margin-left:auto; border:none; background:none; color:#c7c1cd; font-size:15px; }
   .att .rm:hover{ color:var(--pink); }
   input[type=file]{ display:none; }
@@ -244,10 +247,33 @@
 
   .scrim.show{ display:block; }
 
+  .loginoverlay{ position:fixed; inset:0; background:var(--pink); display:none; align-items:center; justify-content:center; padding:24px; z-index:200; }
+  .loginoverlay.show{ display:flex; }
+  .loginbox{ background:#fff; border-radius:20px; padding:38px 34px 30px; width:100%; max-width:380px; text-align:center; }
+  .loginmark{ width:44px; height:44px; border-radius:12px; background:var(--pink); color:#fff; font-size:26px; font-weight:900; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; }
+  .loginbox h1{ font-size:21px; font-weight:800; margin:0 0 8px; color:var(--ink); }
+  .loginbox p{ font-size:13.5px; color:var(--muted); margin:0 0 22px; line-height:1.5; }
+  .loginbox input{ width:100%; border:1.5px solid var(--line); border-radius:10px; padding:12px 14px; font-size:14px; font-family:inherit; margin-bottom:12px; }
+  .loginbox input:focus{ outline:none; border-color:var(--pink); }
+  .loginbox button{ width:100%; background:var(--pink); color:#fff; border:none; border-radius:10px; padding:12px; font-size:14px; font-weight:700; font-family:inherit; }
+  .loginbox button:hover{ opacity:.9; }
+  .loginhint{ font-size:11.5px; color:var(--muted); margin-top:16px; line-height:1.5; }
+
   @media (max-width:640px){ .row2{ grid-template-columns:1fr; } }
 </style>
 </head>
 <body>
+
+  <div class="loginoverlay show" id="loginOverlay">
+    <div class="loginbox">
+      <div class="loginmark">l</div>
+      <h1>level | planner</h1>
+      <p>Pop your name in so everyone knows who's left which note.</p>
+      <input type="text" id="loginNameInput" list="knownNames" placeholder="Your name" autocomplete="name">
+      <button id="loginGoBtn">Continue</button>
+      <div class="loginhint">No password needed — anyone with this link can use the planner.</div>
+    </div>
+  </div>
 
   <div class="topbar">
     <div class="mark">l</div>
@@ -451,7 +477,7 @@
     {key:'title', label:'Task name'}, {key:'assignee', label:'Assigned to'},
     {key:'reviewer', label:'Reviewer'}, {key:'start', label:'Start'}, {key:'due', label:'Due'},
     {key:'status', label:'Status'}, {key:'priority', label:'Priority'}, {key:'labels', label:'Labels'},
-    {key:'bucket', label:'Job type'}, {key:'progress', label:'Progress'}
+    {key:'bucket', label:'Job type'}, {key:'files', label:'Files'}, {key:'progress', label:'Progress'}
   ];
 
   let tasks=[], people=[], buckets=[], notifications=[], columnOrder=COLS.map(c=>c.key), manualOrder=[];
@@ -539,6 +565,7 @@
       const rows = await sbSelect('settings','select=key,value');
       const co = rows.find(r=>r.key==='colorder'), ro = rows.find(r=>r.key==='roworder');
       columnOrder = (co && Array.isArray(co.value) && co.value.length) ? co.value : COLS.map(c=>c.key);
+      COLS.forEach((c,i)=>{ if(!columnOrder.includes(c.key)) columnOrder.splice(i,0,c.key); });
       manualOrder = (ro && Array.isArray(ro.value)) ? ro.value : [];
     }catch(e){ console.error(e); columnOrder=COLS.map(c=>c.key); manualOrder=[]; }
     try{ me = JSON.parse(localStorage.getItem('gl-planner-me')||'{"name":""}'); }catch(e){ me={name:''}; }
@@ -596,19 +623,27 @@
   }
   function renderWhoAmI(){
     const box = $('whoamiBox');
+    const gate = $('loginOverlay');
     if(me.name){
+      gate.classList.remove('show');
       box.innerHTML = `<div class="meplate"><span class="mename">${escapeHtml(me.name)}</span><button class="switchbtn" id="switchUserBtn">switch</button></div>`;
       $('switchUserBtn').addEventListener('click', ()=>{ me.name=''; saveMe(); renderWhoAmI(); renderBell(); });
     } else {
+      gate.classList.add('show');
+      setTimeout(()=>{ const f=$('loginNameInput'); if(f) f.focus(); }, 50);
       box.innerHTML = `<span>you are</span><input id="whoName" type="text" list="knownNames" placeholder="your name"><button class="loginbtn" id="loginBtn">Login</button>`;
       const doLogin = ()=>{
         const name = $('whoName').value.trim();
         if(!name){ $('whoName').focus(); return; }
-        me.name = name; saveMe(); upsertPerson(name); refreshKnownNames(); renderWhoAmI(); renderBell();
+        signIn(name);
       };
       $('loginBtn').addEventListener('click', doLogin);
       $('whoName').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); doLogin(); } });
     }
+  }
+  function signIn(name){
+    me.name = name; saveMe(); upsertPerson(name); refreshKnownNames();
+    renderWhoAmI(); renderBell(); renderCurrentView();
   }
 
   function findPerson(name){ return people.find(p=>p.name.toLowerCase()===name.trim().toLowerCase()); }
@@ -710,6 +745,17 @@
       case 'priority': { const pr=PRIORITY[t.priority]||PRIORITY.medium; return `<td><span class="pill" style="background:${cssColor(pr.color)}">${pr.text}</span></td>`; }
       case 'labels': { const labs=(t.labels||[]).map(k=>LABELS.find(l=>l.key===k)).filter(Boolean); return `<td><div class="labelrow">${labs.map(l=>`<span class="pill" style="background:${cssColor(l.color)}">${l.text}</span>`).join('')||'<span class="dash">—</span>'}</div></td>`; }
       case 'bucket': return `<td>${escapeHtml(t.bucket||'')||'<span class="dash">—</span>'}</td>`;
+      case 'files': {
+        const atts = t.attachments||[];
+        if(!atts.length) return `<td><span class="dash">—</span></td>`;
+        const counts = {};
+        atts.forEach(a=>{ const k=a.kind||'file'; counts[k]=(counts[k]||0)+1; });
+        const chips = Object.keys(counts).map(k=>{
+          const label = `${counts[k]} ${ATT_NAMES[k]||'file'}${counts[k]>1?'s':''}`;
+          return `<span class="filechip" title="${label}">${ATT_ICONS[k]||ATT_ICONS.file}${counts[k]>1?`<span class="n">${counts[k]}</span>`:''}</span>`;
+        }).join('');
+        return `<td><div class="filechips">${chips}</div></td>`;
+      }
       case 'progress': { const p=computePercent(t); return `<td><div class="progresswrap">${donutSvg(p,26,4)}<span class="progresstext">${p}%</span></div></td>`; }
       default: return '<td></td>';
     }
@@ -885,11 +931,15 @@
     $('labelPicker').querySelectorAll('.labelchip').forEach(chip=>{
       chip.addEventListener('click', ()=>{
         const key = chip.dataset.key;
-        draft.labels = draft.labels||[];
-        const has = draft.labels.includes(key);
-        draft.labels = has ? draft.labels.filter(k=>k!==key) : draft.labels.concat([key]);
+        const current = (draft.labels||[])[0];
         const lab = LABELS.find(l=>l.key===key);
-        commit(`${me.name||'Someone'} ${has?'removed':'added'} the "${lab.text}" label`);
+        if(current===key){
+          draft.labels = [];
+          commit(`${me.name||'Someone'} cleared the "${lab.text}" label`);
+        } else {
+          draft.labels = [key];
+          commit(`${me.name||'Someone'} set the label to "${lab.text}"`);
+        }
         renderLabelPicker();
       });
     });
@@ -914,6 +964,7 @@
   }
 
   const ATT_ICONS = { image:'🖼️', pdf:'📄', doc:'📝', sheet:'📊', slides:'📈', zip:'🗜️', file:'📎', link:'🔗' };
+  const ATT_NAMES = { image:'image', pdf:'PDF', doc:'Word doc', sheet:'spreadsheet', slides:'presentation', zip:'archive', file:'file', link:'link' };
   function fmtSize(bytes){
     if(!bytes && bytes!==0) return '';
     if(bytes < 1024) return `${bytes} B`;
@@ -1075,6 +1126,14 @@
     refreshKnownNames();
     renderCurrentView();
     renderBell();
+
+    const gateLogin = ()=>{
+      const name = $('loginNameInput').value.trim();
+      if(!name){ $('loginNameInput').focus(); return; }
+      signIn(name);
+    };
+    $('loginGoBtn').addEventListener('click', gateLogin);
+    $('loginNameInput').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); gateLogin(); } });
 
     $('tabGrid').addEventListener('click', ()=>{ view='grid'; $('tabGrid').classList.add('active'); $('tabBoard').classList.remove('active'); $('gridView').style.display='block'; $('completedBar').style.display=''; $('boardView').style.display='none'; $('boardCompletedBar').style.display='none'; renderGrid(); });
     $('tabBoard').addEventListener('click', ()=>{ view='board'; $('tabBoard').classList.add('active'); $('tabGrid').classList.remove('active'); $('gridView').style.display='none'; $('completedBar').style.display='none'; $('boardView').style.display='flex'; renderBoard(); });
