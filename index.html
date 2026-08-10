@@ -965,6 +965,7 @@
         } else {
           draft.labels = [key];
           commit(`${me.name||'Someone'} set the label to "${lab.text}"`);
+          notifyTeam(`${me.name||'Someone'} marked "${draft.title}" as ${lab.text}`);
         }
         renderLabelPicker();
       });
@@ -1223,6 +1224,7 @@
       const from=STATUS[draft.status].text, to=STATUS[$('mStatus').value].text;
       draft.status=$('mStatus').value;
       commit(`${me.name||'Someone'} changed status from ${from} to ${to}`);
+      notifyTeam(`${me.name||'Someone'} moved "${draft.title}" to ${to}`);
       renderActivity();
       if(draft.status==='completed') closeModalFn();
     });
