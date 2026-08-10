@@ -917,9 +917,19 @@
       createdAt:Date.now(), updatedAt:Date.now(), _new:true };
   }
 
+  let _reopening = false;
   function openModal(id){
     draft = id ? tasks.find(t=>t.id===id) : blankTask();
     if(id) draft._new=false;
+    if(id && !_reopening) refreshTask(id).then(fresh=>{
+      if(!fresh || !draft || draft.id!==id) return;
+      const norm = o => JSON.stringify(Object.assign({}, o, {_new:undefined}));
+      if(norm(fresh) !== norm(draft)){
+        _reopening = true;
+        openModal(id);
+        _reopening = false;
+      }
+    });
     $('mTitle').value = draft.title||'';
     $('mDesc').value = draft.description||'';
     $('mStatus').value = draft.status||'notstarted';
@@ -1160,6 +1170,34 @@
     } catch(e){ /* silent — next poll will retry */ }
   }
 
+  async function pollTasks(){
+    try{
+      const rows = await sbSelect('tasks','select=id,data&order=updated_at.desc');
+      const fresh = rows.map(r=>Object.assign({}, r.data, {id:r.id}));
+      const openId = (draft && !draft._new && $('overlay').classList.contains('show')) ? draft.id : null;
+      if(openId){
+        // leave the task being edited alone — pollChat keeps that one current
+        const mine = tasks.find(t=>t.id===openId);
+        tasks = fresh.map(t=> t.id===openId && mine ? mine : t);
+        if(mine && !fresh.some(t=>t.id===openId)) tasks.unshift(mine);
+      } else {
+        tasks = fresh;
+      }
+      renderCurrentView();
+    } catch(e){ /* silent — next poll will retry */ }
+  }
+
+  async function refreshTask(id){
+    try{
+      const rows = await sbSelect('tasks', `select=data&id=eq.${encodeURIComponent(id)}`);
+      if(!rows || !rows.length) return null;
+      const fresh = Object.assign({}, rows[0].data, {id});
+      const i = tasks.findIndex(t=>t.id===id);
+      if(i>=0) tasks[i] = fresh; else tasks.unshift(fresh);
+      return fresh;
+    } catch(e){ return null; }
+  }
+
   async function pollNotifications(){
     if(!me.name) return;
     try{
@@ -1368,6 +1406,7 @@
     });
 
     setInterval(pollChat, 4000);
+    setInterval(pollTasks, 12000);
     setInterval(pollNotifications, 15000);
   });
 
