@@ -115,6 +115,9 @@
   .progresswrap.big{ position:relative; width:50px; height:50px; }
   .progresswrap.big .pct{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:800; color:var(--ink); }
   .headbtns{ display:flex; gap:8px; flex:none; }
+  .notifybtn{ background:var(--pink); color:#fff; border:none; border-radius:8px; padding:0 14px; height:30px; font-size:0.8125rem; font-weight:700; font-family:inherit; white-space:nowrap; }
+  .notifybtn:hover{ opacity:.9; }
+  .notifybtn:disabled{ opacity:.5; }
   .deletebtn{ background:var(--cloud); border:1.5px solid var(--line); border-radius:8px; width:30px; height:30px; display:flex; align-items:center; justify-content:center; font-size:0.875rem; color:var(--muted); }
   .deletebtn:hover{ border-color:var(--pink); color:var(--pink); background:#fdf1f5; }
   .closebtn{ background:var(--cloud); border:none; border-radius:8px; width:30px; height:30px; display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:1.0625rem; }
@@ -348,6 +351,7 @@
         <div class="headright">
           <div class="progresswrap big" id="modalDonut"></div>
           <div class="headbtns">
+            <button class="notifybtn" id="notifyBtn" title="Tell everyone on this task to take a look">🔔 notify team</button>
             <button class="deletebtn" id="deleteBtn" title="Delete task">🗑</button>
             <button class="closebtn" id="closeModal">&times;</button>
           </div>
@@ -663,17 +667,30 @@
   }
 
   /* ---------------- notifications ---------------- */
-  function notifyPeople(recipients, taskId, taskTitle, message){
+  async function notifyPeople(recipients, taskId, taskTitle, message){
+    const fresh = [];
     recipients.filter(Boolean).forEach(r=>{
       if(me.name && r.toLowerCase()===me.name.trim().toLowerCase()) return;
-      notifications.unshift({ id:uid(), recipient:r, taskId, taskTitle, message, createdAt:Date.now(), readBy:[] });
+      fresh.push({ id:uid(), recipient:r, taskId, taskTitle, message, createdAt:Date.now(), readBy:[] });
     });
-    saveNotifications(); renderBell();
+    if(!fresh.length) return;
+    fresh.forEach(n=>notifications.unshift(n));
+    renderBell();
+    try{
+      await sbUpsert('notifications', fresh.map(n=>({ id:n.id, recipient:n.recipient, task_id:n.taskId||null, task_title:n.taskTitle||null, message:n.message||null, read_by:[] })));
+    }catch(e){
+      console.error(e);
+      toast("Notification didn't send — check your connection.");
+    }
   }
   function teamNames(t){
     const names = (t.assignees||[]).map(a=>a.name);
     if(t.reviewer && t.reviewer.name) names.push(t.reviewer.name);
-    return Array.from(new Set(names));
+    // Anyone who has joined the conversation counts as involved, even if
+    // they were never formally assigned — otherwise their replies go unseen.
+    (t.comments||[]).forEach(c=>{ if(c.author) names.push(c.author); });
+    (t.reviewComments||[]).forEach(c=>{ if(c.author) names.push(c.author); });
+    return Array.from(new Set(names.filter(n=>n && n!=='Someone')));
   }
   function notifyTeam(message){ if(draft) notifyPeople(teamNames(draft), draft.id, draft.title, message); }
   function myNotifications(){ if(!me.name) return []; return notifications.filter(n=>n.recipient.toLowerCase()===me.name.trim().toLowerCase()); }
@@ -1313,6 +1330,22 @@
     $('amendClose').addEventListener('click', closeAmend);
     $('amendToggleBtn').addEventListener('click', toggleAmendDone);
     $('amendOverlay').addEventListener('click', (e)=>{ if(e.target.id==='amendOverlay') closeAmend(); });
+
+    $('notifyBtn').addEventListener('click', async ()=>{
+      if(!draft) return;
+      if(!draft.title||!draft.title.trim()){ toast('Give the task a title first.'); return; }
+      const others = teamNames(draft).filter(n=>!(me.name && n.toLowerCase()===me.name.trim().toLowerCase()));
+      if(!others.length){ toast('No one else is on this task yet — add an assignee or reviewer first.'); return; }
+      const btn = $('notifyBtn');
+      btn.disabled = true;
+      await notifyPeople(others, draft.id, draft.title, `${me.name||'Someone'} flagged "${draft.title}" for you to look at`);
+      draft.activity = draft.activity||[];
+      draft.activity.unshift({id:uid(), text:`${me.name||'Someone'} notified ${others.join(', ')}`, createdAt:Date.now()});
+      commit();
+      renderActivity();
+      btn.disabled = false;
+      toast(`Notified ${others.join(', ')}.`);
+    });
 
     $('deleteBtn').addEventListener('click', ()=>{
       if(!draft) return;
