@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+<meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+<meta name="theme-color" content="#e62065">
+<title>Global Lingo Newsletter Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap">
+<style>
+/* Layout: Level house style (from the Level request form). Pink brand strip, dark gradient hero, then white "sheets" that overlap the hero, each split into ruled sections with lowercase headings ending in a pink dot. One deliberate light look with a dark hero, so every color is set explicitly. */
+:root{
+  --pink:#e62065; --pink-soft:#fdf1f5; --pink-text:#c4114f;
+  --blue:#3fb8c0; --blue-deep:#1f8890; --blue-soft:#e8f7f8;
+  --ink:#1c1c1c; --muted:#6b6670; --faint:#948f99;
+  --paper:#ffffff; --cloud:#f6f5f7; --line:#e7e4e9;
+  --hero-a:#2a1230; --hero-b:#160a22; --hero-c:#3d1230;
+  --prev:#cfc9d3; --good:#1b7a4d; --good-soft:#eafaf3; --warn:#9a5b10; --warn-soft:#fdf3e4;
+  --font:"Outfit", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{margin:0}
+img{max-width:100%}
+html{scroll-behavior:smooth}
+body{background:var(--cloud);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--blue-deep);text-underline-offset:2px}
+a:focus-visible,summary:focus-visible{outline:2px solid var(--pink);outline-offset:2px;border-radius:4px}
+
+.brandstrip{background:var(--pink);color:#fff;display:flex;align-items:center;gap:10px;padding:12px 20px;font-weight:700;font-size:14px;letter-spacing:.02em}
+.brandstrip .mark{width:26px;height:26px;border-radius:6px;background:#fff;color:var(--pink);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px}
+.brandstrip .right{margin-left:auto;font-weight:500;opacity:.92}
+
+.hero{position:relative;overflow:hidden;background:radial-gradient(120% 140% at 85% -10%,var(--hero-c) 0%,transparent 55%),radial-gradient(90% 120% at 0% 110%,var(--blue-deep) 0%,transparent 45%),linear-gradient(160deg,var(--hero-a),var(--hero-b));padding-inline:20px;padding-block:56px 104px}
+.hero::before{content:"";position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,.06) 1px,transparent 1.4px);background-size:22px 22px;opacity:.5;pointer-events:none}
+.hero-inner{position:relative;max-width:880px;margin:0 auto}
+.eyebrow{font-size:12.5px;font-weight:600;letter-spacing:.14em;color:var(--pink);text-transform:uppercase;margin:0 0 12px}
+.hero .eyebrow{color:#ff9fc4}
+.h{font-weight:800;color:var(--blue-deep);line-height:1.08;margin:0;letter-spacing:-.01em;text-wrap:balance}
+.h .dot{color:var(--pink)}
+.hero .h{font-size:clamp(32px,5.6vw,54px);color:#8fe3e6}
+.hero .lead{color:#e8e2ea;font-size:17px;line-height:1.6;max-width:640px;margin:18px 0 0}
+.hero .lead strong{color:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+.chips a{color:#f3eef5;text-decoration:none;font-size:13.5px;font-weight:600;padding:7px 14px;border-radius:100px;border:1.5px solid rgba(255,255,255,.22);background:rgba(255,255,255,.04)}
+.chips a:hover,.chips a:focus-visible{border-color:#ff9fc4;color:#fff}
+
+.wrap{max-width:880px;margin:-64px auto 0;padding-inline:20px;padding-block:0 72px;position:relative;display:flex;flex-direction:column;gap:28px}
+.sheet{background:var(--paper);border-radius:20px;box-shadow:0 20px 60px rgba(20,8,25,.14);overflow:hidden}
+.section{padding:34px 36px;border-bottom:1px solid var(--line);scroll-margin-top:16px}
+.section:last-child{border-bottom:0}
+.section > .h{font-size:clamp(22px,3.4vw,27px);margin-bottom:8px}
+.sub{font-size:15px;color:var(--muted);margin:0 0 20px;max-width:66ch}
+p{margin:0 0 14px;max-width:68ch}
+h3{font-size:17px;font-weight:700;margin:0 0 6px;line-height:1.3}
+.meta{font-size:13px;color:var(--faint)}
+strong{font-weight:600}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.stat{border:1.5px solid var(--line);border-radius:14px;padding:16px 16px 14px}
+.stat .l{font-size:12.5px;font-weight:600;letter-spacing:.03em;color:#57525c;line-height:1.35}
+.stat .v{font-size:34px;font-weight:800;color:var(--ink);line-height:1.1;margin:8px 0 6px;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.stat .s{font-size:13px;color:var(--muted);line-height:1.4}
+.stat .s b{color:var(--pink-text);font-weight:700}
+.stat.hl{border-color:var(--pink);background:var(--pink-soft)}
+
+.scope{display:flex;gap:14px;align-items:flex-start;background:var(--blue-soft);border-radius:14px;padding:16px 18px;margin:0 0 20px}
+.scope .ic{flex:0 0 26px;height:26px;border-radius:7px;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px}
+.scope p{margin:0;font-size:15px;max-width:none}
+
+.tbl{overflow-x:auto;margin:16px 0;border:1.5px solid var(--line);border-radius:14px}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:600px}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;letter-spacing:.03em;color:#57525c;font-weight:600;background:var(--cloud)}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+tr.grp td{background:var(--paper);font-weight:700;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--pink-text)}
+tr.lv td{background:var(--pink-soft)}
+tr.lv td:first-child{font-weight:600}
+
+.chart{border:1.5px solid var(--line);border-radius:14px;padding:14px;margin:6px 0 8px}
+.chart svg{display:block;width:100%;height:auto}
+.chart .ax{font-family:var(--font);font-size:10.5px;fill:var(--faint)}
+.chart .vl{font-family:var(--font);font-size:12px;font-weight:700;fill:var(--ink)}
+.chart .pv{fill:var(--prev)}
+.chart .lv{fill:var(--pink)}
+.chart .grid{stroke:var(--line)}
+.chart .bench{stroke:var(--blue-deep);stroke-dasharray:5 4;stroke-width:1.5}
+.chart .bl{font-family:var(--font);font-size:11px;font-weight:600;fill:var(--blue-deep)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin:4px 0 16px}
+.sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.card{border:1.5px solid var(--line);border-radius:14px;padding:16px 18px}
+.card p{font-size:15px;margin:0;color:#3d3942}
+.card .who{font-size:12px;font-weight:600;letter-spacing:.03em;color:var(--faint);margin-bottom:4px}
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:3px 11px;border-radius:100px;margin-bottom:10px}
+.tag.good{background:var(--good-soft);color:var(--good)}
+.tag.fix{background:var(--warn-soft);color:var(--warn)}
+.tag.list{background:var(--pink-soft);color:var(--pink-text)}
+.tag.new{background:var(--blue-soft);color:var(--blue-deep)}
+
+.callout{border:1.5px solid var(--pink);background:var(--pink-soft);border-radius:14px;padding:16px 18px;margin:16px 0 0;font-size:15px}
+.callout p{margin:0;max-width:none}
+
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.steps li{display:flex;gap:14px;align-items:flex-start;border:1.5px solid var(--line);border-radius:14px;padding:14px 16px}
+.steps .n{flex:0 0 28px;height:28px;border-radius:100px;background:var(--pink);color:#fff;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center}
+.steps p{margin:0;font-size:15px;max-width:none}
+
+.research{display:flex;flex-direction:column;gap:12px}
+.finding{display:grid;grid-template-columns:minmax(0,1fr);gap:4px;border-left:3px solid var(--blue);padding:2px 0 2px 16px}
+.finding p{margin:0;font-size:15px}
+.finding .src{font-size:12.5px;color:var(--faint)}
+
+.quarters{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.q{border:1.5px solid var(--line);border-radius:14px;padding:16px}
+.q .qn{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--pink-text);margin-bottom:4px}
+.q ul{margin:8px 0 0;padding-left:18px;font-size:14.5px;color:#3d3942}
+.q li{margin-bottom:6px}
+
+details{margin:12px 0 0}
+summary{cursor:pointer;font-weight:700;font-size:15px;color:var(--blue-deep)}
+.foot{font-size:13px;color:var(--faint);padding:0 4px}
+.foot p{max-width:none}
+@media (max-width:640px){.section{padding:28px 20px}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="brandstrip"><span class="mark">l</span> level marketing <span class="right">Global Lingo · The Monthly Brief</span></div>
+
+<header class="hero">
+  <div class="hero-inner">
+    <p class="eyebrow">newsletter report · October 6, 2026</p>
+    <h1 class="h">two issues in<span class="dot">.</span><br>best open rate of the year<span class="dot">.</span></h1>
+    <p class="lead">Level took over The Monthly Brief in August. <strong>The August and September issues were opened by 217 and 230 people,</strong> against an average of 80 across the 10 issues before. September's 19.7% open rate is the highest of the last 12 issues and within one point of HubSpot's 20.5% benchmark.</p>
+    <nav class="chips" aria-label="Sections">
+      <a href="#summary">summary</a><a href="#issues">every issue</a><a href="#months">17 months</a><a href="#revenue">revenue</a><a href="#working">working</a><a href="#fixing">fixing</a><a href="#list">contact list</a><a href="#research">what works elsewhere</a><a href="#add">what to add</a><a href="#plan">2027 outline</a><a href="#needs">what we need</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="sheet">
+    <section class="section" id="summary">
+      <h2 class="h">the short version<span class="dot">.</span></h2>
+      <p class="sub">Prepared by Liza Walsh, Level, for Global Lingo leadership and marketing. Covers all 12 newsletters from August 2025 to September 2026, plus 17 months of HubSpot email health data.</p>
+      <div class="scope"><span class="ic">i</span><p><strong>What Level looks after:</strong> the newsletter's content, design, subject lines and send timing. The contact list was supplied by Global Lingo in August, after the previous list had shrunk to 72 contacts, and Level sends to it as supplied. So this report judges the content on opens, reading and clicks, and reports list measures like bounces and unsubscribes for the people who own the list.</p></div>
+      <div class="stats">
+        <div class="stat hl"><div class="l">Open rate, September issue</div><div class="v">19.7%</div><div class="s"><b>Best of the last 12 issues.</b> Previous best 15.3%.</div></div>
+        <div class="stat"><div class="l">People who opened, per issue</div><div class="v">224</div><div class="s"><b>2.8x</b> the average of 80 before.</div></div>
+        <div class="stat"><div class="l">People who clicked, per issue</div><div class="v">10</div><div class="s"><b>1.8x</b> the average of 5.5 before.</div></div>
+        <div class="stat"><div class="l">Revenue credited to August issue</div><div class="v">£682.90</div><div class="s">Across 3 deals, HubSpot linear attribution.</div></div>
+      </div>
+      <p style="margin-top:18px">Clicks and replies are the next job. Ten people clicked in each issue, but most readers open and skim, and nobody has replied to the closing question yet. Both have fixes that work on the current HubSpot plan.</p>
+    </section>
+  </div>
+
+  <div class="sheet">
+    <section class="section" id="issues">
+      <h2 class="h">every issue since august 2025<span class="dot">.</span></h2>
+      <p class="sub">Each newsletter's own HubSpot report, with bot opens and clicks removed. No newsletter went out in June or July 2026.</p>
+      <div class="chart" role="img" aria-label="Bar chart of people who opened each newsletter. 2025: August 93, September 136, October 125, November 83, December 75. 2026: January 74, February 60, March 72, April 63, May 18, then Level's August 217 and September 230.">
+        <svg viewBox="0 0 640 256" xmlns="http://www.w3.org/2000/svg">
+        <!-- scale: 0.8px per person; baseline y=220; 250 people at y=20 -->
+        <line x1="60" y1="220" x2="620" y2="220" class="grid"/>
+        <line x1="60" y1="180" x2="620" y2="180" class="grid" stroke-dasharray="3 4"/>
+        <line x1="60" y1="140" x2="620" y2="140" class="grid" stroke-dasharray="3 4"/>
+        <line x1="60" y1="100" x2="620" y2="100" class="grid" stroke-dasharray="3 4"/>
+        <line x1="60" y1="60" x2="620" y2="60" class="grid" stroke-dasharray="3 4"/>
+        <line x1="60" y1="20" x2="620" y2="20" class="grid" stroke-dasharray="3 4"/>
+        <text x="52" y="224" text-anchor="end" class="ax">0</text>
+        <text x="52" y="184" text-anchor="end" class="ax">50</text>
+        <text x="52" y="144" text-anchor="end" class="ax">100</text>
+        <text x="52" y="104" text-anchor="end" class="ax">150</text>
+        <text x="52" y="64" text-anchor="end" class="ax">200</text>
+        <text x="52" y="24" text-anchor="end" class="ax">250</text>
+<rect x="69.3" y="145.6" width="28" height="74.4" rx="2" class="pv"/><text x="83.3" y="139.6" text-anchor="middle" class="vl">93</text><text x="83.3" y="236" text-anchor="middle" class="ax">Aug</text>
+<rect x="116.0" y="111.2" width="28" height="108.8" rx="2" class="pv"/><text x="130.0" y="105.2" text-anchor="middle" class="vl">136</text><text x="130.0" y="236" text-anchor="middle" class="ax">Sep</text>
+<rect x="162.7" y="120.0" width="28" height="100.0" rx="2" class="pv"/><text x="176.7" y="114.0" text-anchor="middle" class="vl">125</text><text x="176.7" y="236" text-anchor="middle" class="ax">Oct</text>
+<rect x="209.3" y="153.6" width="28" height="66.4" rx="2" class="pv"/><text x="223.3" y="147.6" text-anchor="middle" class="vl">83</text><text x="223.3" y="236" text-anchor="middle" class="ax">Nov</text>
+<rect x="256.0" y="160.0" width="28" height="60.0" rx="2" class="pv"/><text x="270.0" y="154.0" text-anchor="middle" class="vl">75</text><text x="270.0" y="236" text-anchor="middle" class="ax">Dec</text>
+<rect x="302.7" y="160.8" width="28" height="59.2" rx="2" class="pv"/><text x="316.7" y="154.8" text-anchor="middle" class="vl">74</text><text x="316.7" y="236" text-anchor="middle" class="ax">Jan</text>
+<rect x="349.3" y="172.0" width="28" height="48.0" rx="2" class="pv"/><text x="363.3" y="166.0" text-anchor="middle" class="vl">60</text><text x="363.3" y="236" text-anchor="middle" class="ax">Feb</text>
+<rect x="396.0" y="162.4" width="28" height="57.6" rx="2" class="pv"/><text x="410.0" y="156.4" text-anchor="middle" class="vl">72</text><text x="410.0" y="236" text-anchor="middle" class="ax">Mar</text>
+<rect x="442.7" y="169.6" width="28" height="50.4" rx="2" class="pv"/><text x="456.7" y="163.6" text-anchor="middle" class="vl">63</text><text x="456.7" y="236" text-anchor="middle" class="ax">Apr</text>
+<rect x="489.3" y="205.6" width="28" height="14.4" rx="2" class="pv"/><text x="503.3" y="199.6" text-anchor="middle" class="vl">18</text><text x="503.3" y="236" text-anchor="middle" class="ax">May</text>
+<rect x="536.0" y="46.4" width="28" height="173.6" rx="2" class="lv"/><text x="550.0" y="40.4" text-anchor="middle" class="vl">217</text><text x="550.0" y="236" text-anchor="middle" class="ax">Aug</text>
+<rect x="582.7" y="36.0" width="28" height="184.0" rx="2" class="lv"/><text x="596.7" y="30.0" text-anchor="middle" class="vl">230</text><text x="596.7" y="236" text-anchor="middle" class="ax">Sep</text>
+        <text x="176.7" y="252" text-anchor="middle" class="ax">2025</text>
+        <text x="433" y="252" text-anchor="middle" class="ax">2026</text>
+      </svg>
+      </div>
+      <div class="legend"><span><span class="sw" style="background:var(--prev)"></span>Previous manager</span><span><span class="sw" style="background:var(--pink)"></span>Level</span><span>People who opened each issue</span></div>
+      <p><strong>Open rate:</strong> apart from May's 72-person send, no previous issue passed 15.3%, and most sat between 10% and 14%. Level's issues reached 17.9% and then 19.7%, while going to the largest list of the past year. <strong>Clicks:</strong> the previous issues ranged from 0 to 25, with four of the ten getting one click or none. Level's issues got 10 each. October 2025's 25 clicks is still the record, so there is room to grow.</p>
+      <details>
+        <summary>See every issue in a table</summary>
+        <div class="tbl"><table>
+      <thead><tr><th>Issue</th><th class="n">Delivered</th><th class="n">Opened</th><th class="n">Open rate</th><th class="n">Clicked</th><th class="n">Click-through</th><th class="n">Bounces</th><th class="n">Unsubscribes</th></tr></thead>
+      <tbody>
+        <tr class="grp"><td colspan="8">Level</td></tr>
+        <tr class="lv"><td>Sep 30, 2026</td><td class="n">1,170</td><td class="n">230</td><td class="n">19.66%</td><td class="n">10</td><td class="n">4.35%</td><td class="n">0.85%</td><td class="n">13 (1.11%)</td></tr>
+        <tr class="lv"><td>Aug 31, 2026</td><td class="n">1,213</td><td class="n">217</td><td class="n">17.89%</td><td class="n">10</td><td class="n">4.61%</td><td class="n">5.82%</td><td class="n">22 (1.81%)</td></tr>
+        <tr class="grp"><td colspan="8">Previous manager</td></tr>
+        <tr><td>May 29, 2026</td><td class="n">72</td><td class="n">18</td><td class="n">25.00%</td><td class="n">0</td><td class="n">0%</td><td class="n">1.37%</td><td class="n">0</td></tr>
+        <tr><td>Apr 30, 2026</td><td class="n">510</td><td class="n">63</td><td class="n">12.35%</td><td class="n">5</td><td class="n">7.94%</td><td class="n">0.97%</td><td class="n">3 (0.59%)</td></tr>
+        <tr><td>Mar 31, 2026</td><td class="n">520</td><td class="n">72</td><td class="n">13.85%</td><td class="n">7</td><td class="n">9.72%</td><td class="n">0.76%</td><td class="n">4 (0.77%)</td></tr>
+        <tr><td>Feb 27, 2026</td><td class="n">602</td><td class="n">60</td><td class="n">9.97%</td><td class="n">0</td><td class="n">0%</td><td class="n">1.15%</td><td class="n">5 (0.83%)</td></tr>
+        <tr><td>Jan 30, 2026</td><td class="n">703</td><td class="n">74</td><td class="n">10.53%</td><td class="n">1</td><td class="n">1.35%</td><td class="n">1.40%</td><td class="n">2 (0.28%)</td></tr>
+        <tr><td>Dec 29, 2025</td><td class="n">739</td><td class="n">75</td><td class="n">10.15%</td><td class="n">1</td><td class="n">1.33%</td><td class="n">0.54%</td><td class="n">4 (0.54%)</td></tr>
+        <tr><td>Nov 28, 2025</td><td class="n">786</td><td class="n">83</td><td class="n">10.56%</td><td class="n">2</td><td class="n">2.41%</td><td class="n">3.56%</td><td class="n">7 (0.89%)</td></tr>
+        <tr><td>Oct 31, 2025</td><td class="n">818</td><td class="n">125</td><td class="n">15.28%</td><td class="n">25</td><td class="n">20.00%</td><td class="n">1.09%</td><td class="n">4 (0.49%)</td></tr>
+        <tr><td>Sep 30, 2025</td><td class="n">910</td><td class="n">136</td><td class="n">14.95%</td><td class="n">13</td><td class="n">9.56%</td><td class="n">0.44%</td><td class="n">8 (0.88%)</td></tr>
+        <tr><td>Aug 29, 2025</td><td class="n">902</td><td class="n">93</td><td class="n">10.31%</td><td class="n">1</td><td class="n">1.08%</td><td class="n">0.77%</td><td class="n">5 (0.55%)</td></tr>
+      </tbody>
+    </table></div>
+        <p class="meta">Click-through is clicks divided by opens. May's 25% open rate came from 18 people on a 72-person list.</p>
+      </details>
+      <details>
+        <summary>See how each issue was sent</summary>
+        <div class="tbl"><table>
+          <thead><tr><th>Issues</th><th>Sent (UK time)</th><th>Subject line</th></tr></thead>
+          <tbody>
+            <tr><td>Aug 2025 to May 2026 (10 issues)</td><td>Last working day of the month, between 4:16pm and 8:17pm</td><td>The same pattern every month: "Our [Month] recap with you, [first name] from Global Lingo! | Your Global Lingo [Month] newsletter"</td></tr>
+            <tr class="lv"><td>August 2026</td><td>Mon, 2:00pm (UK bank holiday)</td><td>August, in brief, plus a free download</td></tr>
+            <tr class="lv"><td>September 2026</td><td>Wed, 9:15am</td><td>Shadow localization, ESOMAR takeaways, and a free risk check</td></tr>
+          </tbody>
+        </table></div>
+      </details>
+    </section>
+
+    <section class="section" id="months">
+      <h2 class="h">the last 17 months<span class="dot">.</span></h2>
+      <p class="sub">HubSpot's email health dashboard covers every marketing email Global Lingo sent, newsletters included. On open rate, the three most recent periods are the three best since May 2025.</p>
+      <div class="chart" role="img" aria-label="Bar chart of monthly open rate from May 2025 to the last 30 days. Previous months range from 7.7% to 15.0%. August 2026 17.5%, September 2026 18.0%, last 30 days 19.7%. HubSpot benchmark 20.5%.">
+        <svg viewBox="0 0 640 256" xmlns="http://www.w3.org/2000/svg">
+        <!-- scale: 8px per percentage point; baseline y=220; 25% at y=20 -->
+        <line x1="60" y1="220" x2="620" y2="220" class="grid"/>
+        <line x1="60" y1="180" x2="620" y2="180" class="grid" stroke-dasharray="3 4"/>
+        <line x1="60" y1="140" x2="620" y2="140" class="grid" stroke-dasharray="3 4"/>
+        <line x1="60" y1="100" x2="620" y2="100" class="grid" stroke-dasharray="3 4"/>
+        <line x1="60" y1="60" x2="620" y2="60" class="grid" stroke-dasharray="3 4"/>
+        <line x1="60" y1="20" x2="620" y2="20" class="grid" stroke-dasharray="3 4"/>
+        <text x="52" y="224" text-anchor="end" class="ax">0%</text>
+        <text x="52" y="184" text-anchor="end" class="ax">5%</text>
+        <text x="52" y="144" text-anchor="end" class="ax">10%</text>
+        <text x="52" y="104" text-anchor="end" class="ax">15%</text>
+        <text x="52" y="64" text-anchor="end" class="ax">20%</text>
+        <text x="52" y="24" text-anchor="end" class="ax">25%</text>
+        <rect x="65.6" y="115.2" width="20" height="104.8" rx="2" class="pv"/>
+        <rect x="96.7" y="158.4" width="20" height="61.6" rx="2" class="pv"/>
+        <rect x="127.8" y="116.8" width="20" height="103.2" rx="2" class="pv"/>
+        <rect x="158.9" y="139.2" width="20" height="80.8" rx="2" class="pv"/>
+        <rect x="190.0" y="104.8" width="20" height="115.2" rx="2" class="pv"/>
+        <rect x="221.1" y="100.0" width="20" height="120.0" rx="2" class="pv"/>
+        <text x="231.1" y="94.0" text-anchor="middle" class="vl">15.0%</text>
+        <rect x="252.2" y="130.4" width="20" height="89.6" rx="2" class="pv"/>
+        <rect x="283.3" y="140.0" width="20" height="80.0" rx="2" class="pv"/>
+        <rect x="314.4" y="136.8" width="20" height="83.2" rx="2" class="pv"/>
+        <rect x="345.6" y="143.2" width="20" height="76.8" rx="2" class="pv"/>
+        <rect x="376.7" y="118.4" width="20" height="101.6" rx="2" class="pv"/>
+        <rect x="407.8" y="124.0" width="20" height="96.0" rx="2" class="pv"/>
+        <rect x="438.9" y="143.2" width="20" height="76.8" rx="2" class="pv"/>
+        <text x="480.0" y="214" text-anchor="middle" class="ax">n/a</text>
+        <text x="511.1" y="214" text-anchor="middle" class="ax">n/a</text>
+        <rect x="532.2" y="80.0" width="20" height="140.0" rx="2" class="lv"/>
+        <text x="542.2" y="74.0" text-anchor="middle" class="vl">17.5%</text>
+        <rect x="563.3" y="76.0" width="20" height="144.0" rx="2" class="lv"/>
+        <text x="573.3" y="70.0" text-anchor="middle" class="vl">18.0%</text>
+        <rect x="594.4" y="62.4" width="20" height="157.6" rx="2" class="lv"/>
+        <line x1="60" y1="56" x2="620" y2="56" class="bench"/>
+        <text x="64" y="50" class="bl">HubSpot benchmark, now 20.5%</text>
+        <text x="604.4" y="46" text-anchor="middle" class="vl">19.7%</text>
+        <text x="75.6" y="236" text-anchor="middle" class="ax">May</text>
+        <text x="106.7" y="236" text-anchor="middle" class="ax">Jun</text>
+        <text x="137.8" y="236" text-anchor="middle" class="ax">Jul</text>
+        <text x="168.9" y="236" text-anchor="middle" class="ax">Aug</text>
+        <text x="200.0" y="236" text-anchor="middle" class="ax">Sep</text>
+        <text x="231.1" y="236" text-anchor="middle" class="ax">Oct</text>
+        <text x="262.2" y="236" text-anchor="middle" class="ax">Nov</text>
+        <text x="293.3" y="236" text-anchor="middle" class="ax">Dec</text>
+        <text x="324.4" y="236" text-anchor="middle" class="ax">Jan</text>
+        <text x="355.6" y="236" text-anchor="middle" class="ax">Feb</text>
+        <text x="386.7" y="236" text-anchor="middle" class="ax">Mar</text>
+        <text x="417.8" y="236" text-anchor="middle" class="ax">Apr</text>
+        <text x="448.9" y="236" text-anchor="middle" class="ax">May</text>
+        <text x="480.0" y="236" text-anchor="middle" class="ax">Jun</text>
+        <text x="511.1" y="236" text-anchor="middle" class="ax">Jul</text>
+        <text x="542.2" y="236" text-anchor="middle" class="ax">Aug</text>
+        <text x="573.3" y="236" text-anchor="middle" class="ax">Sep</text>
+        <text x="604.4" y="236" text-anchor="middle" class="ax">Last 30d</text>
+        <text x="184" y="252" text-anchor="middle" class="ax">2025</text>
+        <text x="465" y="252" text-anchor="middle" class="ax">2026</text>
+      </svg>
+      </div>
+      <div class="legend"><span><span class="sw" style="background:var(--prev)"></span>Before the handover</span><span><span class="sw" style="background:var(--pink)"></span>Since Level took over</span><span>Monthly open rate, all marketing emails</span></div>
+      <p><strong>Click-throughs have settled at 4.2% to 4.6%,</strong> above most months of the past year, which mostly sat between 1% and 2%. A few months ran higher, such as October 2025 (20.3%) and March 2026 (10.6%). HubSpot's benchmark is 10.5%, so this is where the most room is.</p>
+      <details>
+        <summary>See every month in a table</summary>
+        <div class="tbl"><table>
+        <thead><tr><th>Month</th><th class="n">Health score</th><th class="n">Opens</th><th class="n">Click-throughs</th><th class="n">Hard bounces</th><th class="n">Unsubscribes</th><th class="n">Emails sent</th></tr></thead>
+        <tbody>
+          <tr class="grp"><td colspan="7">HubSpot benchmark</td></tr>
+          <tr><td>Benchmark</td><td class="n"></td><td class="n">20.5%</td><td class="n">10.5%</td><td class="n">0.40%</td><td class="n">0.45%</td><td class="n"></td></tr>
+          <tr class="grp"><td colspan="7">Since Level took over</td></tr>
+          <tr class="lv"><td>Last 30 days (Sep 4 to Oct 3)</td><td class="n">3</td><td class="n">19.7%</td><td class="n">4.3%</td><td class="n">0.68%</td><td class="n">1.11%</td><td class="n">1.2K</td></tr>
+          <tr class="lv"><td>Sep 2026</td><td class="n">2</td><td class="n">18.0%</td><td class="n">4.6%</td><td class="n">5.74%</td><td class="n">1.81%</td><td class="n">1.3K</td></tr>
+          <tr class="lv"><td>Aug 2026</td><td class="n">2</td><td class="n">17.5%</td><td class="n">4.2%</td><td class="n">5.75%</td><td class="n">1.73%</td><td class="n">1.3K</td></tr>
+          <tr class="grp"><td colspan="7">Before the handover</td></tr>
+          <tr><td>Jul 2026</td><td class="n">n/a</td><td class="n">n/a</td><td class="n">n/a</td><td class="n">n/a</td><td class="n">n/a</td><td class="n">Under 400</td></tr>
+          <tr><td>Jun 2026</td><td class="n">n/a</td><td class="n">n/a</td><td class="n">n/a</td><td class="n">n/a</td><td class="n">n/a</td><td class="n">Under 400</td></tr>
+          <tr><td>May 2026</td><td class="n">1</td><td class="n">9.6%</td><td class="n">1.0%</td><td class="n">12.18%</td><td class="n">0.55%</td><td class="n">1.2K</td></tr>
+          <tr><td>Apr 2026</td><td class="n">3</td><td class="n">12.0%</td><td class="n">8.2%</td><td class="n">0.58%</td><td class="n">0.59%</td><td class="n">515</td></tr>
+          <tr><td>Mar 2026</td><td class="n">4</td><td class="n">12.7%</td><td class="n">10.6%</td><td class="n">0.38%</td><td class="n">0.38%</td><td class="n">524</td></tr>
+          <tr><td>Feb 2026</td><td class="n">2</td><td class="n">9.6%</td><td class="n">0%</td><td class="n">0.82%</td><td class="n">0.83%</td><td class="n">609</td></tr>
+          <tr><td>Jan 2026</td><td class="n">2</td><td class="n">10.4%</td><td class="n">1.4%</td><td class="n">1.12%</td><td class="n">0.28%</td><td class="n">713</td></tr>
+          <tr><td>Dec 2025</td><td class="n">3</td><td class="n">10.0%</td><td class="n">1.4%</td><td class="n">0.27%</td><td class="n">0.41%</td><td class="n">743</td></tr>
+          <tr><td>Nov 2025</td><td class="n">2</td><td class="n">11.2%</td><td class="n">1.7%</td><td class="n">2.62%</td><td class="n">0.67%</td><td class="n">1.1K</td></tr>
+          <tr><td>Oct 2025</td><td class="n">3</td><td class="n">15.0%</td><td class="n">20.3%</td><td class="n">0.85%</td><td class="n">0.37%</td><td class="n">827</td></tr>
+          <tr><td>Sep 2025</td><td class="n">3</td><td class="n">14.4%</td><td class="n">13.5%</td><td class="n">0.84%</td><td class="n">0.43%</td><td class="n">1.7K</td></tr>
+          <tr><td>Aug 2025</td><td class="n">2</td><td class="n">10.1%</td><td class="n">1.1%</td><td class="n">0.66%</td><td class="n">0.55%</td><td class="n">909</td></tr>
+          <tr><td>Jul 2025</td><td class="n">4</td><td class="n">12.9%</td><td class="n">4.1%</td><td class="n">0.21%</td><td class="n">0.32%</td><td class="n">951</td></tr>
+          <tr><td>Jun 2025</td><td class="n">3</td><td class="n">7.7%</td><td class="n">1.2%</td><td class="n">0.37%</td><td class="n">0.19%</td><td class="n">1.1K</td></tr>
+          <tr><td>May 2025</td><td class="n">3</td><td class="n">13.1%</td><td class="n">1.4%</td><td class="n">0.71%</td><td class="n">0.36%</td><td class="n">1.1K</td></tr>
+        </tbody>
+      </table></div>
+        <p class="meta">HubSpot's August and September 2026 rows show the same volume and bounce rate, which matches the August 31 send. The last-30-days row covers the September 30 send. Click-throughs are clicks divided by opens.</p>
+      </details>
+    </section>
+
+    <section class="section" id="revenue">
+      <h2 class="h">revenue credited to the august issue<span class="dot">.</span></h2>
+      <p class="sub">HubSpot's revenue attribution gives the August newsletter a share of the value of deals closed by contacts who received it. It uses the linear model, which splits each deal's credit evenly across every recorded touchpoint, such as emails, meetings and website visits.</p>
+      <div class="tbl"><table>
+        <thead><tr><th>August 2026 newsletter</th><th class="n">Attributed revenue</th><th class="n">Deals</th><th class="n">Contacts</th><th class="n">Total value of those deals</th></tr></thead>
+        <tbody>
+          <tr class="lv"><td>Last quarter (Jul to Sep 2026)</td><td class="n">£682.90</td><td class="n">3</td><td class="n">3</td><td class="n">£6,424.64</td></tr>
+          <tr class="lv"><td>October 2026, so far</td><td class="n">£30.23</td><td class="n">1</td><td class="n">1</td><td class="n">£1,057.89</td></tr>
+        </tbody>
+      </table></div>
+      <p>The attributed revenue is the newsletter's share of credit, not money it brought in alone. The total deal value is shown for context. These figures rely on Global Lingo's team recording deals in HubSpot against the right contacts. The September newsletter went out on September 30, so it has no attribution figures yet.</p>
+    </section>
+  </div>
+
+  <div class="sheet">
+    <section class="section" id="working">
+      <h2 class="h">what's working<span class="dot">.</span></h2>
+      <div class="cards">
+        <div class="card"><span class="tag good">working</span><h3>Specific subject lines</h3><p>For a year, every subject line followed the same "Our [Month] recap" pattern. September's named the three things inside and got the best open rate of the 12 issues.</p></div>
+        <div class="card"><span class="tag good">working</span><h3>Sent in the working day</h3><p>All 10 previous issues went out between 4pm and 8:30pm on the last working day of the month. September went at 9:15am on a Wednesday and was opened by more people than any other issue.</p></div>
+        <div class="card"><span class="tag good">working</span><h3>Articles get the clicks</h3><p>In August, half the clicks went to the four "worth a read" articles, led by the manufacturing piece. The Global Insights link drew clicks in both issues (2, then 4).</p></div>
+        <div class="card"><span class="tag good">working</span><h3>A format that repeats</h3><p>Both issues followed the six-section brief: Karl's note, the month in brief, a named team voice (Andrada, then Liam), reads, a download and a question. Each month now starts from a template.</p></div>
+      </div>
+    </section>
+
+    <section class="section" id="fixing">
+      <h2 class="h">what we're fixing<span class="dot">.</span></h2>
+      <p class="sub">All four fixes work on Global Lingo's current HubSpot plan.</p>
+      <div class="cards">
+        <div class="card"><span class="tag fix">fixing</span><h3>Photos link to the homepage</h3><p>In September, 5 of 11 clicks went to the homepage, mostly through the logo and header photo. From October, the header photo links to the lead story (this month, the Global Insights edition), and article images link to their articles. The logo stays on the website.</p></div>
+        <div class="card"><span class="tag fix">fixing</span><h3>No replies to the question</h3><p>The three answers look like buttons but aren't links. From October, each answer becomes an email link with the answer already filled in, so replying takes two taps. If that proves fiddly, the answer boxes go and the question stays as a plain "hit reply" prompt.</p></div>
+        <div class="card"><span class="tag fix">fixing</span><h3>The download needs a bigger push</h3><p>The translation brief template got 2 clicks in August and the risk check got none in September. October's download is tied to the lead article and named in the subject line's preview text.</p></div>
+        <div class="card"><span class="tag fix">fixing</span><h3>More skimming in September</h3><p>63% of September readers glanced rather than read, up from 52.5% in August. September's opening note ran to four paragraphs; October's is one short paragraph.</p></div>
+      </div>
+    </section>
+
+    <section class="section" id="list">
+      <h2 class="h">the contact list<span class="dot">.</span></h2>
+      <p class="sub">Bounces, unsubscribes and spam reports depend mostly on who is on the list and how they joined. Global Lingo supplied the list Level now sends to, so these measures are reported for the list's owners. The old list had been shrinking every month: 902 inboxes in August 2025, 510 by April 2026 and 72 in May.</p>
+      <div class="cards">
+        <div class="card"><span class="tag list">list</span><h3>Bounces fell after the first send</h3><p>The first send to the new list bounced at 5.82%. HubSpot automatically stops mailing addresses that hard bounce, and the September send bounced at 0.85%. HubSpot's hard bounce rate for the last 30 days is 0.68%, against a 0.4% benchmark.</p></div>
+        <div class="card"><span class="tag list">list</span><h3>Unsubscribes are high but falling</h3><p>22 people left in August and 13 in September (1.81%, then 1.11%), against HubSpot's 0.45% benchmark and 0.28% to 0.89% on the old list.</p></div>
+        <div class="card"><span class="tag list">list</span><h3>"I didn't sign up"</h3><p>Across all emails since January 2025, 10 of the 24 people who gave a reason for leaving said they never signed up. That pattern started before the handover.</p></div>
+        <div class="card"><span class="tag list">list</span><h3>High bounces before August too</h3><p>HubSpot's May 2026 row shows about 1,200 emails with a 12.18% hard bounce rate, the highest of the 17 months on the dashboard, three months before Level started.</p></div>
+      </div>
+      <div class="callout"><p><strong>Some opens and clicks come from Global Lingo's own addresses.</strong> Four shared global-lingo.com mailboxes (bp@, honda@, global.kineo@ and praxis@) are among the most active openers in both issues, and 2 of the 10 people clicking each month were one of these. Level doesn't know who reads these mailboxes. Without them, about 8 outside readers clicked each issue.</p></div>
+    </section>
+  </div>
+
+  <div class="sheet">
+    <section class="section" id="research">
+      <h2 class="h">what works for other b2b newsletters<span class="dot">.</span></h2>
+      <p class="sub">What email and content researchers say a business newsletter needs, and how The Monthly Brief measures up.</p>
+      <div class="research">
+        <div class="finding"><p><strong>Reward the reader's time with useful things.</strong> Readers expect tips, technical information and best practice rather than company promotion. One guide suggests keeping company news to 10% to 20% of the content. <em>The Monthly Brief already leads with practical articles and a download, and keeps company news to the short "in brief" list. Global Lingo's teams can help most here: the tips, questions and lessons that come up in client work are exactly the useful content readers want.</em></p><span class="src">Sources: <a href="https://www.mediapost.com/publications/article/295446/the-email-edge-the-art-of-the-b2b-newsletter.html">MediaPost, The Art of the B2B Newsletter</a>; <a href="https://act-on.com/blog/dont-bore-people-10-ideas-for-b2b-newsletter-content/">Act-On, 10 ideas for B2B newsletter content</a></span></div>
+        <div class="finding"><p><strong>Name the story in the subject line.</strong> Subject lines work better when they say what the issue is about rather than just who it's from. <em>September's subject did this and got the best open rate of the year.</em></p><span class="src">Source: <a href="https://www.mediapost.com/publications/article/295446/the-email-edge-the-art-of-the-b2b-newsletter.html">MediaPost</a></span></div>
+        <div class="finding"><p><strong>Judge success on clicks and replies more than opens.</strong> Apple Mail loads email images automatically, which counts as an open even when nobody reads it, so opens are best used to compare issues with each other. Gmail now sorts its Promotions tab by relevance, and engagement such as clicks and replies feeds that. <em>From October, this report leads on clicks and replies.</em></p><span class="src">Sources: <a href="https://bird.com/en-ca/docs/knowledge-base/deliverability/apple-mail-privacy">Bird, Apple Mail Privacy Protection</a>; <a href="https://martech.org/how-gemini-in-gmail-changes-inbox-visibility-for-marketers/">MarTech, March 2026</a></span></div>
+        <div class="finding"><p><strong>Write in live text, not text inside images.</strong> Gmail's Gemini features now summarize emails, and they read the text. Headlines baked into images, and images without alt text (the short description read aloud or shown when images don't load), get lost. <em>The Monthly Brief already does this: every issue uses real text for headers and buttons, with alt text on every image.</em></p><span class="src">Source: <a href="https://www.klaviyo.com/blog/gmail-gemini-in-the-inbox">Klaviyo, January 2026</a></span></div>
+        <div class="finding"><p><strong>Use real people's voices.</strong> In the Content Marketing Institute's 2026 research, 96% of B2B organizations create thought leadership, but fewer than 5% of employees typically contribute to it. <em>"From the team" already puts a different named employee in every issue, which most competitors don't do.</em></p><span class="src">Source: <a href="https://contentmarketinginstitute.com/press-room/new-b2b-research-finds-winning-marketing-teams-are-building-fundamentals-not-just-playing-with-prompts">Content Marketing Institute, B2B Content and Marketing Trends: Insights for 2026</a></span></div>
+        <div class="finding"><p><strong>Invite the reader in.</strong> Recurring ideas include answering a real customer question each month with help from sales, polls and quizzes, short customer stories, and a curated "best of the industry" roundup. <em>Some of these suit Global Lingo well; see the next section.</em></p><span class="src">Source: <a href="https://act-on.com/blog/dont-bore-people-10-ideas-for-b2b-newsletter-content/">Act-On</a></span></div>
+        <div class="finding"><p><strong>Protect deliverability.</strong> Gmail and Yahoo require authenticated sending (SPF, DKIM and DMARC), a one-click unsubscribe for marketing mail, and spam complaints below 0.3%. The strict rules apply to senders of about 5,000 emails a day, but following them at any volume helps mail land in the inbox. <em>Spam reports have been 0% on every issue. Global Lingo's IT team can confirm the domain settings.</em></p><span class="src">Source: <a href="https://bird.com/docs/knowledge-base/deliverability/gmail-yahoo-requirements">Bird, Gmail and Yahoo sender requirements</a></span></div>
+      </div>
+    </section>
+
+    <section class="section" id="add">
+      <h2 class="h">what to add to the newsletter<span class="dot">.</span></h2>
+      <p class="sub">Small, repeatable pieces that fit the six-section format and need little extra from the Global Lingo team.</p>
+      <div class="cards">
+        <div class="card"><span class="tag new">new</span><h3>Ask Global Lingo</h3><p>One real question a client asked this month, answered in 60 words by the project manager who handled it. Sales and project teams send one question each month.</p></div>
+        <div class="card"><span class="tag new">new</span><h3>You told us</h3><p>Share the replies to last month's question in two lines ("most of you said internal sign-off slows you down"). It shows the question is read and gives readers a reason to answer the next one.</p></div>
+        <div class="card"><span class="tag new">new</span><h3>A three-line client result</h3><p>One proof point with a number, used with the client's permission, as the strategy brief already plans. It sits under the download, never as a sales pitch.</p></div>
+        <div class="card"><span class="tag new">new</span><h3>Where to find us</h3><p>One line on the next event the team is attending, such as DevLearn in November, so readers can say hello.</p></div>
+        <div class="card"><span class="tag new">new</span><h3>Word of the month</h3><p>One untranslatable word with a one-line meaning, matching the popular LinkedIn word posts. It's a light moment readers can share.</p></div>
+        <div class="card"><span class="tag new">new</span><h3>A downloads library</h3><p>Once there are four or five downloads, one website page that lists them all, linked from every issue. Each new download then adds to something that lasts.</p></div>
+      </div>
+    </section>
+
+    <section class="section" id="plan">
+      <h2 class="h">an outline for 2027<span class="dot">.</span></h2>
+      <p class="sub">A working outline for discussion, not a fixed schedule. It sets the direction for the year and will change as Global Lingo's priorities, events and content become clear.</p>
+      <div class="quarters">
+        <div class="q"><div class="qn">Jan to Mar</div><h3>Fix the foundations</h3><ul><li>A named owner for the contact list</li><li>Consent checked for the August list</li><li>Shared mailboxes moved to their own list</li><li>Sign-up link in staff email signatures</li></ul></div>
+        <div class="q"><div class="qn">Apr to Jun</div><h3>Build the habits</h3><ul><li>"Ask Global Lingo" and "You told us" every month</li><li>First three-line client result</li><li>Downloads library page on the website</li><li>Same send slot each month, Tuesday to Thursday morning</li></ul></div>
+        <div class="q"><div class="qn">Jul to Sep</div><h3>Get more specific</h3><ul><li>A short reader survey in July, the quiet month</li><li>Use the survey to pick sectors for lead stories</li><li>A bigger issue for International Translation Day and ESOMAR in September</li></ul></div>
+        <div class="q"><div class="qn">Oct to Dec</div><h3>Show the year</h3><ul><li>Reader horror stories for the Halloween issue</li><li>A "2027 in numbers" December issue</li><li>A year-end report and a case for any HubSpot upgrade</li></ul></div>
+      </div>
+
+      <h3 style="margin-top:26px">Benchmarks to track against in 2027</h3>
+      <p class="meta" style="margin:0 0 4px">These are reference points for tracking progress month to month, not commitments. Several depend on the contact list, input from Global Lingo's teams and the HubSpot plan.</p>
+      <div class="tbl"><table>
+        <thead><tr><th>Measure</th><th class="n">Now</th><th class="n">HubSpot benchmark</th><th>What affects it</th></tr></thead>
+        <tbody>
+          <tr><td>Open rate</td><td class="n">19.7%</td><td class="n">20.5%</td><td>Subject lines, send timing and list quality</td></tr>
+          <tr><td>Click-through (clicks ÷ opens)</td><td class="n">4.3%</td><td class="n">10.5%</td><td>Content, links and the download</td></tr>
+          <tr><td>Replies to the question</td><td class="n">0</td><td class="n">None published</td><td>Tracked monthly to see if the new reply links help</td></tr>
+          <tr><td>Unsubscribes</td><td class="n">1.11%</td><td class="n">0.45%</td><td>Mostly who is on the list and how they joined</td></tr>
+          <tr><td>Hard bounces</td><td class="n">0.68%</td><td class="n">0.4%</td><td>List quality, owned by Global Lingo</td></tr>
+        </tbody>
+      </table></div>
+
+      <details open>
+        <summary>See a theme for every month of 2027</summary>
+        <div class="tbl"><table>
+          <thead><tr><th>Month</th><th>Hook</th><th>Lead story idea</th><th>Download from the shortlist</th></tr></thead>
+          <tbody>
+            <tr><td>January</td><td>New year planning</td><td>Planning next year's markets and languages</td><td>Localization project checklist</td></tr>
+            <tr><td>February</td><td>International Mother Language Day, Feb 21</td><td>Why consistent terminology matters</td><td>Terminology tracker starter sheet</td></tr>
+            <tr><td>March</td><td>International Francophonie Day, Mar 20</td><td>Localizing for French-speaking markets</td><td>Vendor evaluation scorecard</td></tr>
+            <tr><td>April</td><td>UN English and Spanish Language Days, Apr 23</td><td>Running meetings across languages</td><td>Meeting minutes template</td></tr>
+            <tr><td>May</td><td>Global Accessibility Awareness Day</td><td>Live captioning at events</td><td>Live captioning and event readiness checklist</td></tr>
+            <tr><td>June</td><td>Before summer rollouts</td><td>Getting eLearning ready for every market</td><td>eLearning localization checklist</td></tr>
+            <tr><td>July</td><td>The quiet month</td><td>Best of the first half, plus a reader survey</td><td>None; the survey is the ask</td></tr>
+            <tr><td>August</td><td>Women in Translation Month</td><td>Translators and interpreters in their own words</td><td>Interpreter briefing template</td></tr>
+            <tr><td>September</td><td>International Translation Day, Sep 30, and ESOMAR</td><td>What the research world is talking about</td><td>Multilingual survey checklist, refreshed</td></tr>
+            <tr><td>October</td><td>Halloween</td><td>Readers' translation horror stories</td><td>Translation brief template, refreshed</td></tr>
+            <tr><td>November</td><td>Event season</td><td>Notes from the team's events</td><td>A new download chosen with the team</td></tr>
+            <tr><td>December</td><td>Year in review</td><td>2027 in numbers, and what readers told us</td><td>The downloads library</td></tr>
+          </tbody>
+        </table></div>
+        <p class="meta">Event dates for 2027 aren't confirmed yet, so events are placed by season. Awareness days are fixed dates set by UNESCO, the UN and their organizers.</p>
+      </details>
+
+      <div class="callout"><p><strong>What a HubSpot upgrade would add.</strong> A/B testing of subject lines needs Marketing Hub Professional or Enterprise (<a href="https://knowledge.hubspot.com/marketing-email/run-a-b-tests-on-marketing-email-subject-lines">HubSpot Knowledge Base</a>). Everything else in this plan works on the current plan. If the numbers keep growing, the year-end report can make the case.</p></div>
+    </section>
+
+    <section class="section" id="needs">
+      <h2 class="h">what we need from global lingo<span class="dot">.</span></h2>
+      <p class="sub">Level can keep improving what's in the newsletter. Who receives it, and whether they asked to, needs someone at Global Lingo.</p>
+      <div class="cards">
+        <div class="card"><div class="who">Leadership</div><h3>Name an owner for the contact list</h3><p>One person who answers where contacts came from, adds new subscribers, and checks list health before each import.</p></div>
+        <div class="card"><div class="who">Data protection lead</div><h3>Confirm consent for the August list</h3><p>A quick check that everyone on the supplied list agreed to hear from Global Lingo, or has a relationship that covers it.</p></div>
+        <div class="card"><div class="who">Account teams</div><h3>Decide on the shared mailboxes</h3><p>Should bp@, honda@, global.kineo@ and praxis@ get the newsletter? If they're internal or client project inboxes, a separate list keeps the numbers clear.</p></div>
+        <div class="card"><div class="who">IT team</div><h3>A sign-up link in email signatures</h3><p>The website already has a sign-up page. Adding its link to every staff email signature sends more people to it, so the list grows with people who chose to join.</p></div>
+        <div class="card"><div class="who">Sales and project teams</div><h3>One client question a month</h3><p>For "Ask Global Lingo": a question a client asked, sent by the 15th of each month.</p></div>
+        <div class="card"><div class="who">Team leads</div><h3>Voices and download owners</h3><p>Three names for "From the team" from November to January, and a team to check each new download.</p></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="foot">
+    <p>Sources: HubSpot single-send reports for all 12 newsletters from August 2025 to September 2026; HubSpot email health dashboard, May 2025 to Oct 3, 2026 (all marketing emails, with HubSpot benchmarks); HubSpot Analyze report, Jan 1, 2025 to Oct 6, 2026; HubSpot revenue attribution for the August 2026 newsletter (linear model). All exported Oct 6, 2026. Opens and clicks exclude bots. "Read in full" and "glanced" are HubSpot's time-spent measures. Research sources are linked in place.</p>
+  </div>
+</main>
+
+</body>
+</html>
