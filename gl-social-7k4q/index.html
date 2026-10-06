@@ -141,17 +141,55 @@
   details.more > summary .tagm{margin-left:auto; font-size:12px; font-weight:700; color:var(--muted); background:var(--cloud); border:1px solid var(--line); border-radius:100px; padding:2px 9px;}
   .stack{display:flex; flex-direction:column; gap:10px;}
   .group-h{font-size:13px; font-weight:800; letter-spacing:.8px; text-transform:uppercase; color:var(--muted); margin:4px 0 0;}
+
+  /* Level house style restyle (Oct 2026): pink brand strip, dark gradient hero, white sheets overlapping it, lowercase headings with a pink dot. */
+  :root{ --prev:#cfc9d3; --pink-text:#c4114f; --cloud:#f6f5f7; --muted:#6b6670; --hero-a:#2a1230; --hero-b:#160a22; --hero-c:#3d1230; }
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --prev:#5b5561; --pink-text:#ff7aa8; } }
+  :root[data-theme="dark"]{ --prev:#5b5561; --pink-text:#ff7aa8; }
+  body{line-height:1.6;}
+  .brandstrip{background:#e62065;color:#fff;display:flex;align-items:center;gap:10px;padding:12px 20px;font-weight:700;font-size:14px;letter-spacing:.02em;flex-wrap:wrap;}
+  .brandstrip .mark{width:26px;height:26px;border-radius:6px;background:#fff;color:#e62065;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;flex:none;}
+  .brandstrip .right{margin-left:auto;font-weight:500;opacity:.92;}
+  .hero{position:relative;overflow:hidden;background:radial-gradient(120% 140% at 85% -10%,var(--hero-c) 0%,transparent 55%),radial-gradient(90% 120% at 0% 110%,#1f8890 0%,transparent 45%),linear-gradient(160deg,var(--hero-a),var(--hero-b));padding-inline:22px;padding-block:56px 104px;}
+  .hero::before{content:"";position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,.06) 1px,transparent 1.4px);background-size:22px 22px;opacity:.5;pointer-events:none;}
+  .hero-inner{position:relative;max-width:1080px;margin:0 auto;}
+  .hero .eyebrow{color:#ff9fc4;font-size:12.5px;font-weight:600;letter-spacing:.14em;margin:0 0 12px;}
+  .hero .h{font-size:clamp(26px,3.9vw,42px);color:#8fe3e6;font-weight:800;line-height:1.08;margin:0;letter-spacing:-.01em;text-wrap:balance;}
+  .hero .h .dot{color:#ff4d8a;}
+  .hero .h .ln{display:block;text-wrap:balance;}
+  .hero .lede{color:#e8e2ea;font-size:17px;line-height:1.6;max-width:68ch;margin:18px 0 0;}
+  .hero .lede strong{color:#fff;}
+  .wrap{margin-top:-64px;position:relative;padding-block:0 72px;}
+  .wrap > .section, .wrap > .panel, .wrap > .ask{background:var(--paper);border-radius:20px;box-shadow:0 20px 60px rgba(20,8,25,.14);padding:34px 36px;border:0;gap:16px;}
+  .wrap > .ask{border:2px solid var(--pink);}
+  @media (max-width:640px){ .wrap > .section, .wrap > .panel, .wrap > .ask{padding:28px 18px;} }
+  .wrap > .section > .intro h2, .wrap > .panel > .intro h2, .wrap > .ask > .intro h2, .wrap > .panel > h2{font-size:clamp(22px,3.4vw,27px);color:var(--blue-deep);text-transform:lowercase;line-height:1.15;letter-spacing:-.01em;}
+  .wrap > .section > .intro h2::after, .wrap > .panel > .intro h2::after, .wrap > .ask > .intro h2::after, .two .panel h2::after{content:".";color:var(--pink);}
+  .two .panel h2{text-transform:lowercase;color:var(--blue-deep);}
+  .two .panel{box-shadow:none;border:1.5px solid var(--line);border-radius:14px;}
+  .group-h{color:var(--pink-text);letter-spacing:.12em;font-size:12px;}
+  .scope{display:block;background:var(--blue-soft);border-radius:14px;padding:16px 18px;max-width:none;}
+  .kpi{box-shadow:none;border:1.5px solid var(--line);border-radius:14px;}
+  .kpi.hl{border-color:var(--pink);background:var(--pink-soft);}
+  .kpi .label{color:#57525c;font-size:12.5px;letter-spacing:.03em;}
+  .kpi .delta{color:var(--pink-text);}
+  .scroll{border:1.5px solid var(--line);}
+  th{text-transform:none;letter-spacing:.03em;color:#57525c;font-weight:600;}
+  .rowgroup td{background:var(--paper);color:var(--pink-text);letter-spacing:.12em;font-size:11.5px;}
+  .callout{border:1.5px solid var(--pink);background:var(--pink-soft);border-radius:14px;}
+  .idea, .askcard{background:var(--paper);border:1.5px solid var(--line);border-radius:14px;}
+  .askcard .who{color:var(--pink-text);}
+  details.more{border:1.5px solid var(--line);border-radius:14px;}
+  details.more > summary{color:var(--blue-deep);}
+  .chartbox{border:1.5px solid var(--line);border-radius:14px;padding:14px;}
+  .nav{top:0;}
+  .hero{padding-inline:0;} .hero-inner{padding-inline:22px;}
+  @media (max-width:560px){ .hero-inner{padding-inline:16px;} }
 </style>
 
 </head>
 <body>
-<div class="topbar">
-  <div class="mark">l</div>
-  <div class="brand">level | social report</div>
-  <div class="spacer"></div>
-  <div class="chip-top">Global Lingo · LinkedIn</div>
-  <div class="chip-top">Updated Oct 2, 2026</div>
-</div>
+<div class="brandstrip"><span class="mark">l</span> level marketing <span class="right">Global Lingo · LinkedIn report · Updated Oct 2, 2026</span></div>
 
 <nav class="nav" aria-label="Report sections">
   <div class="nav-inner">
@@ -167,22 +205,26 @@
   </div>
 </nav>
 
+<header class="hero anchor" id="summary">
+  <div class="hero-inner">
+    <p class="eyebrow">LinkedIn progress report · September 2026 report</p>
+    <h1 class="h"><span class="ln">two months in<span class="dot">.</span></span><span class="ln">reach, reactions and engagement are all up<span class="dot">.</span></span><span class="ln">posts with our people are leading the way<span class="dot">.</span></span></h1>
+    <p class="lede">Level took over Global Lingo's LinkedIn on August 1, in the quietest season of the year and with no paid ads running. <strong>August and September were the page's two strongest months for organic reach in the past year</strong>, each around two and a half times July. In September, Level's first full month, reactions per post were up 66% on the summer and engagement was well above LinkedIn's median. Four of the ten most-seen posts of the last 12 months went out in these two months, led by Meet our Cairo team.</p>
+  </div>
+</header>
+
 <main class="wrap">
 
-  <header class="head anchor" id="summary">
-    <div class="eyebrow">LinkedIn progress report · September 2026 report</div>
-    <h1>Two months in: reach, reactions, and engagement are all up, and <em>posts with our people</em> are leading the way.</h1>
-    <p class="lede">Level took over Global Lingo's LinkedIn on August 1, in the quietest season of the year and with no paid ads running. <strong>August and September were the page's two strongest months for organic reach in the past year</strong>, each around two and a half times July. In September, Level's first full month, reactions per post were up 66% on the summer and engagement was well above LinkedIn's median. Four of the ten most-seen posts of the last 12 months went out in these two months, led by Meet our Cairo team.</p>
-    <div class="scope"><strong>What this role covers:</strong> brand awareness on LinkedIn, plus support for SEO and AEO (being found and cited by search engines and AI tools). So this report measures reach, engagement, community, and search visibility. Enquiries and sales sit further down the line and depend on many other things.</div>
-    <div class="meta">
-      <span class="tag">Prepared by Liza Walsh, Level</span>
-      <span class="tag">For Global Lingo leadership and marketing</span>
-      <span class="tag">154 posts analyzed</span>
-    </div>
-  </header>
+  
 
-  <section class="kpis" aria-label="Headline numbers">
-    <div class="kpi">
+  <section class="section" aria-labelledby="short-h">
+    <div class="intro">
+      <h2 id="short-h">The short version</h2>
+      <p class="sub">Prepared by Liza Walsh, Level, for Global Lingo leadership and marketing. Covers 154 posts from October 2025 to September 2026.</p>
+    </div>
+    <div class="scope"><strong>What this role covers:</strong> brand awareness on LinkedIn, plus support for SEO and AEO (being found and cited by search engines and AI tools). So this report measures reach, engagement, community, and search visibility. Enquiries and sales sit further down the line and depend on many other things.</div>
+    <div class="kpis" aria-label="Headline numbers">
+    <div class="kpi hl">
       <div class="label">Organic impressions, September</div>
       <div class="value">14,826</div>
       <div class="delta">about 2.4x July <span>(6,056 in July)</span></div>
@@ -202,6 +244,7 @@
       <div class="value">99</div>
       <div class="delta">Meet our Cairo team <span>· a 12-month high</span></div>
     </div>
+  </div>
   </section>
 
   <section class="panel" aria-labelledby="reach-h">
@@ -351,7 +394,7 @@
             <thead><tr><th>Date</th><th>Post</th><th class="num">Impressions</th><th class="num">Reactions</th><th>Takeaway</th></tr></thead>
             <tbody>
               <tr class="rowgroup"><td colspan="5">Top posts</td></tr>
-              <tr><td class="date">Aug 6</td><td>Meet our team in Cairo</td><td class="num">4,481</td><td class="num">99</td><td>Most reactions of any post in 12 months</td></tr>
+              <tr><td class="date">Aug 6</td><td>Meet our team in Cairo</td><td class="num">4,484</td><td class="num">99</td><td>Most reactions of any post in 12 months</td></tr>
               <tr><td class="date">Sep 2</td><td>Live at ESOMAR, meet Adam, Steven and the team</td><td class="num">1,778</td><td class="num">55</td><td>Named people, a real place, a clear invitation</td></tr>
               <tr><td class="date">Sep 30</td><td>International Translation Day, with the Cairo and Cluj-Napoca teams</td><td class="num">1,777</td><td class="num">42</td><td>Another awareness day made into a people post</td></tr>
               <tr><td class="date">Sep 15</td><td>Guatemala Independence Day, with team photos</td><td class="num">1,719</td><td class="num">56</td><td>Photos turned an awareness day into a people post</td></tr>
@@ -418,7 +461,7 @@
           <table>
             <thead><tr><th>Edition</th><th class="num">Article views</th><th class="num">Post impressions</th><th class="num">Engagement rate</th><th class="num">Reactions</th><th class="num">Comments</th></tr></thead>
             <tbody>
-              <tr><td class="you">September 2026: Why is your language partner starting to look like a software company?</td><td class="num">96*</td><td class="num">681</td><td class="num">7.6%</td><td class="num">13</td><td class="num">2</td></tr>
+              <tr><td class="you">September 2026: Why is your language partner starting to look like a software company?</td><td class="num">102*</td><td class="num">681</td><td class="num">7.6%</td><td class="num">13</td><td class="num">2</td></tr>
               <tr><td class="you">August 2026: Why doesn't "just now" mean the same thing everywhere?</td><td class="num">1,489</td><td class="num">745</td><td class="num">5.8%</td><td class="num">8</td><td class="num">2</td></tr>
               <tr><td class="you">July 2026: What do we mean by "good translation"?</td><td class="num">1,421</td><td class="num">1,142</td><td class="num">7.71%</td><td class="num">16</td><td class="num">2</td></tr>
               <tr><td>June 2026</td><td class="num">1,368</td><td class="num">592</td><td class="num">6.25%</td><td class="num">16</td><td class="num">0</td></tr>
@@ -430,7 +473,7 @@
             </tbody>
           </table>
         </div>
-        <p class="mnote" style="padding-top:10px;">*The September edition went out on September 30 and was emailed to 5,666 subscribers, but two days later LinkedIn still showed a 0% email open rate. In August, a 19% open rate drove most of the edition's 1,489 views, so September's view count looks like a LinkedIn email reporting or delivery issue rather than a drop in interest; the post itself already has more reactions than August's. We're checking it with LinkedIn and will update the figure. Across all editions, Global Insights had 660 article views from September 1 to October 2, as readers keep coming back to earlier editions, and gained 134 new subscribers, bringing it to 7,962.</p>
+        <p class="mnote" style="padding-top:10px;">*The September edition went out on September 30 and was emailed to 5,666 subscribers, but on October 5 LinkedIn still showed a 0% email open rate. LinkedIn's own help text says article views and email open rates "are an estimate and may not be precise," and that views count every time the article was seen "on LinkedIn or via email." In August, a 19% open rate drove most of the edition's 1,489 views, so September's lower view count points to LinkedIn's email tracking or delivery rather than a drop in interest. The post itself already has more reactions than August's (13 vs 8). We're checking it with LinkedIn and will update the figure. Across all editions, Global Insights had 660 article views from September 1 to October 2, as readers keep coming back to earlier editions, and gained 134 new subscribers, bringing it to 7,962.</p>
         <p class="mnote">Liza has written and posted Global Insights since the July edition. Karl commented on the July edition to thank its author. Translator's Toolbox is a separate newsletter run by the Global Lingo team; its last edition was May 2026.</p>
       </details>
       <details class="more">
@@ -765,7 +808,7 @@
   var pw=W-L-R, ph=H-T-B, band=pw/rows.length, bw=band*0.62;
   function y(v){return T+ph-v/peak*ph;}
   var s='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" font-family="Outfit, system-ui, sans-serif" font-size="12">';
-  s+='<rect x="'+(W-270)+'" y="6" width="12" height="12" rx="3" fill="var(--faint)"/><text x="'+(W-252)+'" y="16" fill="var(--muted)">Before August</text>';
+  s+='<rect x="'+(W-270)+'" y="6" width="12" height="12" rx="3" fill="var(--prev)"/><text x="'+(W-252)+'" y="16" fill="var(--muted)">Before August</text>';
   s+='<rect x="'+(W-110)+'" y="6" width="12" height="12" rx="3" fill="var(--pink)"/><text x="'+(W-92)+'" y="16" fill="var(--ink)" font-weight="700">Since August</text>';
   for(var t=0;t<=peak;t+=step){
     s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y(t)+'" y2="'+y(t)+'" stroke="'+(t===0?'var(--muted)':'var(--line)')+'" stroke-width="1"/>';
@@ -773,7 +816,7 @@
   }
   rows.forEach(function(r,i){
     var x=L+i*band+(band-bw)/2, yy=y(r[1]), m=names[Number(r[0].slice(5,7))-1];
-    s+='<rect x="'+x+'" y="'+yy+'" width="'+bw+'" height="'+(y(0)-yy)+'" rx="5" fill="'+(r[2]?'var(--pink)':'var(--faint)')+'"><title>'+m+' '+r[0].slice(0,4)+': '+r[1].toLocaleString('en-US')+' organic impressions</title></rect>';
+    s+='<rect x="'+x+'" y="'+yy+'" width="'+bw+'" height="'+(y(0)-yy)+'" rx="5" fill="'+(r[2]?'var(--pink)':'var(--prev)')+'"><title>'+m+' '+r[0].slice(0,4)+': '+r[1].toLocaleString('en-US')+' organic impressions</title></rect>';
     s+='<text x="'+(x+bw/2)+'" y="'+(yy-7)+'" text-anchor="middle" fill="'+(r[2]?'var(--ink)':'var(--muted)')+'" font-weight="'+(r[2]?700:500)+'" style="font-variant-numeric:tabular-nums">'+(r[1]/1000).toFixed(1)+'k</text>';
     s+='<text x="'+(x+bw/2)+'" y="'+(y(0)+18)+'" text-anchor="middle" fill="var(--muted)">'+m+'</text>';
     if(r[0]==="2026-01"||r[0]==="2025-10") s+='<text x="'+(x+bw/2)+'" y="'+(y(0)+34)+'" text-anchor="middle" fill="var(--muted)" font-size="11">'+r[0].slice(0,4)+'</text>';
